@@ -1,0 +1,16 @@
+<div class="page">
+  <div class="button-group__container">
+    <button #btn1 (click)="changeActive(btn1)">Landscape 1</button>
+    <button #btn2 (click)="changeActive(btn2)">Landscape 2</button>
+    <button #btn3 (click)="changeActive(btn3)">Portrait 1</button>
+  </div>
+  <app-adaptive-img *ngIf="active === 'Landscape 1'" src="../../../assets/bg-stub/bg01.jpg"
+                    width="50rem" height="37.5rem"
+                    [useShadow]="true"></app-adaptive-img>
+  <app-adaptive-img *ngIf="active === 'Landscape 2'" src="https://farm9.staticflickr.com/8141/7562931754_d235245504_k.jpg"
+                    width="50rem" height="37.5rem"
+                    [useShadow]="true"></app-adaptive-img>
+  <app-adaptive-img *ngIf="active === 'Portrait 1'" src="https://img.zcool.cn/community/01009959e1da10a80121ae0c2fd0f0.jpg"
+                    width="50rem" height="37.5rem"
+                    [useShadow]="true"></app-adaptive-img>
+</div>

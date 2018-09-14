@@ -1,0 +1,44 @@
+/* Global styles */
+
+@import "./icons.scss";
+
+html, body, input, button {
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+  font-family: 'Segoe UI', 'Microsoft YaHei UI', 'Microsoft YaHei';
+}
+
+$mask-dark: (
+    background-color: rgba(30, 30, 30, 0.5),
+    color: white
+);
+
+$mask-moderate: (
+  background-color: rgba(55, 55, 55, 0.35),
+  color: white
+);
+
+$mask-light: (
+  background-color: rgba(90, 90, 90, 0.35),
+  background-color-disabled: rgba(90, 90, 90, 0.7),
+  background-color-hover: rgba(150, 150, 150, 0.35),
+  background-color-focus: rgba(90, 90, 90, 0.5),
+  color: white,
+  color-disabled: rgb(200, 200, 200)
+);
+
+$mask-white: (
+  background-color: rgba(150, 150, 150, 0.35),
+  color: white
+);
+
+$border-light: (
+  border: 1px rgba(lightgray, 0.15) solid,
+  border-color: rgba(lightgray, 0.15),
+  border-color-active: rgba(white, 0.2)
+);
+
+$border-white: (
+  border: 1px rgba(white, 0.15) solid
+);

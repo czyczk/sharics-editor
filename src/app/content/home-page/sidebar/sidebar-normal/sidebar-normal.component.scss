@@ -1,0 +1,36 @@
+@import "../../../../../styles";
+
+.sidebar-item-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  width: 100%;
+  height: 100%;
+  color: map_get($mask-light, color);
+}
+
+.sidebar-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  height: 4rem;
+  padding: 0 2rem 0 2rem;
+  background-color: map_get($mask-light, background-color);
+  border-bottom: map_get($border-light, border);
+  cursor: pointer;
+}
+.sidebar-item:hover {
+  background-color: map_get($mask-white, background-color);
+}
+
+.sidebar-space {
+  flex-grow: 1;
+  background-color: map_get($mask-moderate, background-color);
+}
+
+.sidebar-item__icon {
+  margin: 0 1.5rem 0 0.5rem;
+  font-size: 1.25rem;
+}

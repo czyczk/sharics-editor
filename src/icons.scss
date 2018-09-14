@@ -1,0 +1,53 @@
+// Register the font icon
+$anticon-woff-font-path: "/assets/fonts/iconfont/iconfont.woff";
+@font-face {
+  font-family: 'anticon';
+  src: url($anticon-woff-font-path) format('woff');
+}
+
+.anticon {
+  font-family: "anticon";
+  font-weight: normal;
+  font-style: normal;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+}
+
+// A function template to generate font icon classes
+@mixin generate_anticon_class($name, $content) {
+  .#{"anticon-" + $name + "::before"} {
+    content: $content;
+  }
+}
+
+// Generate font icon classes
+@include generate_anticon_class(step-forward, "\e600");
+@include generate_anticon_class(step-backward, "\e601");
+@include generate_anticon_class(forward, "\e602");
+@include generate_anticon_class(backward, "\e603");
+@include generate_anticon_class(caret-right, "\e604");
+@include generate_anticon_class(caret-left, "\e605");
+@include generate_anticon_class(arrow-down, "\e619");
+@include generate_anticon_class(arrow-up, "\e61a");
+@include generate_anticon_class(arrow-right, "\e61b");
+@include generate_anticon_class(arrow-left, "\e61c");
+@include generate_anticon_class(down, "\e61d");
+@include generate_anticon_class(up, "\e61e");
+@include generate_anticon_class(right, "\e61f");
+@include generate_anticon_class(left, "\e620");
+@include generate_anticon_class(minus, "\e624");
+@include generate_anticon_class(plus, "\e627");
+@include generate_anticon_class(check, "\e632");
+@include generate_anticon_class(close, "\e633");
+@include generate_anticon_class(cross, "\e633");
+@include generate_anticon_class(pause, "\e63d");
+@include generate_anticon_class(ellipsis, "\e647");
+@include generate_anticon_class(loading, "\e64d");
+@include generate_anticon_class(save, "\e669");
+@include generate_anticon_class(setting, "\e672");
+@include generate_anticon_class(edit, "\e692");
+@include generate_anticon_class(folder-open, "\e699");
+@include generate_anticon_class(fast-backward, "\e6c6");
+@include generate_anticon_class(fast-forward, "\e6c7");

@@ -1,0 +1,24 @@
+<div class="container"
+     [ngStyle]="{ 'width': width,
+                  'height': height }">
+  <!-- Padding top -->
+  <div [ngClass]="['masked_margin-' + backgroundTheme, 'padding--top-bottom']"></div>
+  <!-- Component row -->
+  <div class="component-row">
+    <!-- Padding left -->
+    <div [ngClass]="['masked_margin-' + backgroundTheme, 'padding--left-right']"></div>
+    <!-- Content -->
+    <div class="content">
+      <ng-content></ng-content>
+    </div>
+    <!-- Padding right -->
+    <div [ngClass]="['masked_margin-' + backgroundTheme, 'padding--left-right']"></div>
+  </div>
+  <!-- Padding bottom -->
+  <div *ngIf="!useBottomTransition"
+       [ngClass]="['masked_margin-' + backgroundTheme, 'padding--top-bottom']"></div>
+  <div *ngIf="useBottomTransition"
+       [ngClass]="[
+       'transition-zone__bottom--' + bottomTransitionFrom + '-' + bottomTransitionTo,
+       'padding--top-bottom']"></div>
+</div>

@@ -1,0 +1,31 @@
+<div class="container">
+  <div *ngIf="marginTop"
+       [ngClass]="'masked_margin-' + backgroundTheme"
+       [ngStyle]="{ 'width': '100%',
+                    'height': marginTop }"></div>
+  <div class="component-row" #componentRow>
+    <div *ngIf="marginLeft"
+         [ngClass]="'masked_margin-' + backgroundTheme"
+         [ngStyle]="{ 'width': marginLeft,
+                      'height': componentRowHeight + 'px' }"></div>
+    <button class="masked_component"
+            [ngClass]="'masked_component-' + componentTheme"
+            [ngStyle]="{ 'width': width,
+                         'height': height,
+                         'minWidth': minWidth,
+                         'minHeight': minHeight }"
+            [disabled]="isDisabled">
+      <div #contentContainer class="content_container">
+        <ng-content></ng-content>
+      </div>
+    </button>
+    <div *ngIf="marginRight"
+         [ngClass]="'masked_margin-' + backgroundTheme"
+         [ngStyle]="{ 'width': marginRight,
+                      'height': componentRowHeight + 'px' }"></div>
+  </div>
+  <div *ngIf="marginBottom"
+       [ngClass]="'masked_margin-' + backgroundTheme"
+       [ngStyle]="{ 'width': '100%',
+                    'height': marginBottom }"></div>
+</div>

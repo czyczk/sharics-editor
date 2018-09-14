@@ -1,0 +1,29 @@
+<div>
+  <!-- Full screened background -->
+  <div class="background-container">
+    <app-background-mask src="../../../assets/bg-stub/bg01.jpg"></app-background-mask>
+  </div>
+  <!-- Full screened content -->
+  <div class="content-container">
+    <!-- Logo -->
+    <header class="area__logo decorator__border--right decorator__border--bottom">
+      <span>Logo</span><!-- Sharics -->
+      <router-outlet></router-outlet>
+    </header>
+    <!-- Sidebar -->
+    <aside class="area__sidebar decorator__border--right">
+      <!--<router-outlet name="sidebar"></router-outlet>-->
+      <app-sidebar-normal></app-sidebar-normal>
+    </aside>
+    <!-- Dynamic bar: Button when not connected; Playback status bar when connected + in editor panel; Title in settings panel  -->
+    <header class="area__dynamic-bar">
+      <!--<router-outlet name="dynamicBar"></router-outlet>-->
+      <app-dynamic-bar></app-dynamic-bar>
+    </header>
+    <section class="area__main-panel">
+      <a routerLink="/editor">Editor</a>
+      <a routerLink="/settings">Settings</a>
+    </section>
+  </div>
+
+</div>

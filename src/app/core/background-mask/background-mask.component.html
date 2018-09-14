@@ -1,0 +1,15 @@
+<div class="container">
+  <div [ngStyle]="{ 'filter': 'blur(' + blurSize + 'px)',
+                    'margin': -2 * blurSize + 'px',
+                    'width': 'calc(100% +' + 4 * blurSize + 'px)',
+                    'height': 'calc(100% + ' + 4 * blurSize + 'px)'
+                  }">
+    <app-adaptive-img width="100%" height="100%"
+                      [src]="src"></app-adaptive-img>
+  </div>
+</div>
+
+<!--
+     The minus-valued margin and the extra pixels in size are set to
+     enlarge the internal image, preventing the white outer border around the image.
+-->
