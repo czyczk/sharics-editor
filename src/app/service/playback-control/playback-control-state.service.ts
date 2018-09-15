@@ -10,4 +10,5 @@ export class PlaybackControlStateService {
 
   isConnected = new BehaviorSubject(false);
   temp = new BehaviorSubject<number>(0);
+  playbackState = new BehaviorSubject<'idle' | 'playing' | 'paused'>('idle');
 }

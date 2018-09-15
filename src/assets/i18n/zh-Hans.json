@@ -1,0 +1,16 @@
+{
+  "playback-control-bar": {
+    "btn-cts": {
+      "default": "连接服务器",
+      "operating": "正在连接……",
+      "on-failure": "失败"
+    },
+    "btn-previous-track.title": "上一首",
+    "btn-play-or-pause.title": "播放 / 暂停",
+    "btn-stop.title": "停止",
+    "btn-next-track.title": "下一首"
+  },
+  "settings-title-bar": {
+    "btn-settings": "设置"
+  }
+}

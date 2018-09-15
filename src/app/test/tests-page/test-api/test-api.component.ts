@@ -17,7 +17,7 @@ export class TestAPIComponent implements OnInit {
               private fileService: FileService) { }
 
   getTimestamp() {
-    this.playbackService$.getTimestamp().subscribe(it => this.timestamp = it);
+    this.playbackService$.getTimestamp().subscribe(it => this.timestamp = it.msg);
   }
 
   playOrPause() {

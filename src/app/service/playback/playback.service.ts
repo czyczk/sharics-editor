@@ -1,14 +1,18 @@
-import {Injectable, OnInit} from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {Observable, Subject} from 'rxjs';
-import {AppSettingsService} from '../app-settings/app-settings.service';
+import {Injectable, OnDestroy} from '@angular/core';
+import {Observable} from 'rxjs';
 import {AppSettings} from '../../shared/app-settings';
+import {GeneralResponse} from '../../shared/response/general-response';
+import {HttpClient} from '@angular/common/http';
+import {AppSettingsService} from '../app-settings/app-settings.service';
+import {ApiService} from '../api.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class PlaybackService implements OnInit {
-  constructor(private _http: HttpClient, private appSettingsService: AppSettingsService) { }
+export class PlaybackService extends ApiService implements OnDestroy {
+  constructor(http: HttpClient, appSettingsService: AppSettingsService) {
+    super(http, appSettingsService);
+  }
 
   // private _httpOptions = {
   //   headers: new HttpHeaders({
@@ -16,26 +20,36 @@ export class PlaybackService implements OnInit {
   //   })
   // };
 
-  private appSettings: AppSettings;
-
-  ngOnInit() {
-    this.appSettingsService.appSettings.subscribe(it => {
-      this.appSettings = it;
-    });
+  hello(): Observable<GeneralResponse<string>> {
+    return this.http.get<GeneralResponse<string>>(super.prefixUrlWithBase('/hello'));
   }
 
-
-  hello(): Observable<string> {
-    return this._http.get<string>(`http://localhost:27636/api/v1/hello`);
+  getTimestamp(): Observable<GeneralResponse<number>> {
+    return this.http.get<GeneralResponse<number>>(super.prefixUrlWithBase('/playback/timestamp'));
   }
 
-  getTimestamp(): Observable<number> {
-    return this._http.get<number>(`http://localhost:27636/api/v1/playback/timestamp`);
+  getPlaybackState(): Observable<GeneralResponse<'idle' | 'playing' | 'paused'>> {
+    return this.http.get<GeneralResponse<'idle' | 'playing' | 'paused'>>(super.prefixUrlWithBase('/playback/state'));
+  }
+
+  playPreviousTrack(): Observable<any> {
+    return this.http.post<any>(super.prefixUrlWithBase('/playback/previous'), null);
   }
 
   playOrPause(): Observable<any> {
-    // return this._http.post(`http://localhost:27636/api/v1/playback/play-pause`, null, this._httpOptions);
-    return this._http.post(`http://localhost:27636/api/v1/playback/play-pause`, null);
+    return this.http.post(super.prefixUrlWithBase('/playback/play-pause'), null);
+  }
+
+  stop(): Observable<any> {
+    return this.http.post(super.prefixUrlWithBase('/playback/stop'), null);
+  }
+
+  playNextTrack(): Observable<any> {
+    return this.http.post<any>(super.prefixUrlWithBase('/playback/next'), null);
+  }
+
+  ngOnDestroy() {
+    super.ngOnDestroy();
   }
 
 }

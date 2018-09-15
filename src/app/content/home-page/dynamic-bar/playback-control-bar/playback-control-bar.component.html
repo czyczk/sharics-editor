@@ -1,6 +1,44 @@
-<app-masked-container style="width: 100%; height: 100%; margin: 0; padding: 0;"
-                      [useBottomTransition]="'true'">
-  <app-masked-button id="btn__cts"
+<!-- Show the connect button if it's not connected -->
+<app-masked-container *ngIf="!isConnected" [useBottomTransition]="'true'">
+  <app-masked-button id="btn-cts"
                      (click)="connectToServer()"
-                     [isDisabled]="btnCtsDisabled">{{btnCtsText}}</app-masked-button>
+                     [isDisabled]="btnCtsState === 'operating' || btnCtsState === 'on-failure'">
+    <div translate>{{componentName}}.btn-cts.{{btnCtsState}}</div>
+  </app-masked-button>
+</app-masked-container>
+
+<!-- Show the playback control bar if it's connected -->
+<app-masked-container *ngIf="isConnected" [useBottomTransition]="'true'" [isContentFullWidth]="'true'">
+  <section class="playback-controls__container">
+    <!-- Current state -->
+    <div class="playback-controls__text playback-state">
+      State: Idle / Playing / Paused
+    </div>
+    <div class="flex-space"></div>
+    <!-- Playback control buttons -->
+    <app-masked-button id="btn-previous-track" [title]="componentName + '.btn-previous-track.title' | translate"
+                       [width]="btnPlaybackControlsSize" [height]="btnPlaybackControlsSize" (click)="playPreviousTrack()">
+      <i class="anticon anticon-step-backward"></i>
+    </app-masked-button>
+    <app-masked-button id="btn-play-or-pause" [title]="componentName + '.btn-play-or-pause.title' | translate"
+                       [width]="btnPlaybackControlsSize" [height]="btnPlaybackControlsSize" (click)="playOrPause()">
+      <i *ngIf="playbackState !== 'playing'; else pauseIcon" class="anticon anticon-caret-right"></i>
+      <ng-template #pauseIcon>
+        <i class="anticon anticon-pause"></i>
+      </ng-template>
+    </app-masked-button>
+    <app-masked-button id="btn-stop" [title]="componentName + '.btn-stop.title' | translate"
+                       [width]="btnPlaybackControlsSize" [height]="btnPlaybackControlsSize" (click)="stop()">
+      <i class="anticon anticon-stop"></i>
+    </app-masked-button>
+    <app-masked-button id="btn-next-track" [title]="componentName + '.btn-next-track.title' | translate"
+                       [width]="btnPlaybackControlsSize" [height]="btnPlaybackControlsSize" (click)="playNextTrack()">
+      <i class="anticon anticon-step-forward"></i>
+    </app-masked-button>
+    <!-- Playback position -->
+    <div class="flex-space"></div>
+    <div class="playback-controls__text playback-position">
+      3:00 / 4:21
+    </div>
+  </section>
 </app-masked-container>

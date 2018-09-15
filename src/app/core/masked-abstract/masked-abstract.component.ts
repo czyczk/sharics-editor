@@ -36,7 +36,7 @@ export abstract class MaskedAbstractComponent implements OnInit {
   @Input() marginLeft: string;
 
   @Input() backgroundTheme: 'dark' | 'moderate' | 'light' | 'white' = 'moderate';
-  @Input() componentTheme: 'dark' | 'moderate' | 'light' | 'white' = 'light';
+  @Input() componentTheme: 'none' | 'dark' | 'moderate' | 'light' | 'white' = 'light';
 
   ngOnInit() {
     this.parseMargin();

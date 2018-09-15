@@ -1,7 +1,11 @@
 @import "../masked-component.scss";
 
 .content {
-  display: inline-block;
+  display: flex;
+}
+
+.content--full-width {
+  width: 100%;
 }
 
 .padding--top-bottom {

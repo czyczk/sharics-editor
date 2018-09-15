@@ -1,0 +1,16 @@
+{
+  "playback-control-bar": {
+    "btn-cts": {
+      "default": "Connect to server",
+      "operating": "Connecting...",
+      "on-failure": "Failed"
+    },
+    "btn-previous-track.title": "Previous track",
+    "btn-play-or-pause.title": "Play / pause",
+    "btn-stop.title": "Stop",
+    "btn-next-track.title": "Next track"
+  },
+  "settings-title-bar": {
+    "btn-settings": "Settings"
+  }
+}
