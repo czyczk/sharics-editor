@@ -1,4 +1,14 @@
 {
+  "sidebar-normal": {
+    "open": "打开...",
+    "save-as": "另存为...",
+    "settings": "设置"
+  },
+  "sidebar-settings": {
+    "display": "显示",
+    "keymap": "键盘映射",
+    "settings": "设置"
+  },
   "playback-control-bar": {
     "btn-cts": {
       "default": "连接服务器",
@@ -8,7 +18,12 @@
     "btn-previous-track.title": "上一首",
     "btn-play-or-pause.title": "播放 / 暂停",
     "btn-stop.title": "停止",
-    "btn-next-track.title": "下一首"
+    "btn-next-track.title": "下一首",
+    "playback-state": {
+      "idle": "闲置",
+      "playing": "正在播放",
+      "paused": "暂停"
+    }
   },
   "settings-title-bar": {
     "btn-settings": "设置"

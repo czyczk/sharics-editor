@@ -11,8 +11,8 @@
 <app-masked-container *ngIf="isConnected" [useBottomTransition]="'true'" [isContentFullWidth]="'true'">
   <section class="playback-controls__container">
     <!-- Current state -->
-    <div class="playback-controls__text playback-state">
-      State: Idle / Playing / Paused
+    <div class="playback-controls__text playback-state" translate>
+      playback-control-bar.playback-state.{{playbackState}}
     </div>
     <div class="flex-space"></div>
     <!-- Playback control buttons -->
@@ -38,7 +38,9 @@
     <!-- Playback position -->
     <div class="flex-space"></div>
     <div class="playback-controls__text playback-position">
-      3:00 / 4:21
+      <div *ngIf="playbackState !== 'idle'">
+        {{playbackPosition}} / {{trackLength}}
+      </div>
     </div>
   </section>
 </app-masked-container>

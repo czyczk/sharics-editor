@@ -1,3 +1,21 @@
-<p>
-  sidebar-settings works!
-</p>
+<div class="sidebar-item__container">
+  <div class="sidebar-item decorator__border--right">
+    <i class="anticon anticon-display sidebar-item__icon"></i>
+    <div translate>{{componentName}}.display</div>
+  </div>
+  <div class="sidebar-item decorator__border--right">
+    <i class="anticon anticon-keyboard sidebar-item__icon"></i>
+    <div translate>{{componentName}}.keymap</div>
+  </div>
+  <div class="sidebar-space decorator__border--right"></div>
+  <div class="sidebar-item--activated__container decorator__border--top">
+    <div class="sidebar-item sidebar-item--back decorator__border--right" (click)="navToEditor()">
+      <i class="anticon anticon-arrow-left"></i>
+    </div>
+    <div class="sidebar-item sidebar-item--activated">
+      <i class="anticon anticon-setting sidebar-item__icon"></i>
+      <div translate>{{componentName}}.settings</div>
+    </div>
+  </div>
+
+</div>

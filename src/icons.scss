@@ -52,8 +52,17 @@ $anticon-woff-font-path: "/assets/fonts/iconfont/iconfont.woff";
 @include generate_anticon_class(fast-backward, "\e6c6");
 @include generate_anticon_class(fast-forward, "\e6c7");
 
+
+.anticon-display::before {
+  font-family: 'Segoe MDL2 Assets';
+  content: "\e7f4";
+}
+.anticon-keyboard::before {
+  font-family: 'Segoe MDL2 Assets';
+  content: "\e765";
+}
 .anticon-stop::before {
   font-family: 'Segoe MDL2 Assets';
-  font-size: 0.7rem;
+  font-size: 0.7em;
   content: "\e002";
 }

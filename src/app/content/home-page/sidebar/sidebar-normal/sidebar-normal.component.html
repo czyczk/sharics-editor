@@ -1,15 +1,15 @@
-<div class="sidebar-item-container">
-  <div class="sidebar-item">
+<div class="sidebar-item__container">
+  <div class="sidebar-item decorator__border--right">
     <i class="anticon anticon-folder-open sidebar-item__icon"></i>
-    <span>Open...</span>
+    <div translate>{{componentName}}.open</div>
   </div>
-  <div class="sidebar-item">
+  <div class="sidebar-item decorator__border--right">
     <i class="anticon anticon-save sidebar-item__icon"></i>
-    <span>Save as...</span>
+    <div translate>{{componentName}}.save-as</div>
   </div>
-  <div class="sidebar-space"></div>
-  <div class="sidebar-item">
+  <div class="sidebar-space decorator__border--right decorator__border--bottom"></div>
+  <div class="sidebar-item decorator__border--right" (click)="navToSettings()">
     <i class="anticon anticon-setting sidebar-item__icon"></i>
-    <span>Settings...</span>
+    <div translate>{{componentName}}.settings</div>
   </div>
 </div>

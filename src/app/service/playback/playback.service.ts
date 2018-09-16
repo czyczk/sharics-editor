@@ -28,6 +28,10 @@ export class PlaybackService extends ApiService implements OnDestroy {
     return this.http.get<GeneralResponse<number>>(super.prefixUrlWithBase('/playback/timestamp'));
   }
 
+  getTrackLength(): Observable<GeneralResponse<number>> {
+    return this.http.get<GeneralResponse<number>>(super.prefixUrlWithBase('/playback/length'));
+  }
+
   getPlaybackState(): Observable<GeneralResponse<'idle' | 'playing' | 'paused'>> {
     return this.http.get<GeneralResponse<'idle' | 'playing' | 'paused'>>(super.prefixUrlWithBase('/playback/state'));
   }

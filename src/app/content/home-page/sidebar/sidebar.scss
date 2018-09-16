@@ -1,0 +1,90 @@
+@import "../../../../styles";
+
+$sidebar-item-size: 4rem;
+$sidebar-item-animation-duration: 0.35s;
+
+.sidebar-item__container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  width: 100%;
+  height: 100%;
+  color: map_get($mask-light, color);
+}
+
+.sidebar-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  height: $sidebar-item-size;
+  padding: 0 2rem 0 2rem;
+  background-color: map_get($mask-light, background-color);
+  border-bottom: map_get($border-light, border);
+  cursor: pointer;
+}
+.sidebar-item:hover {
+  background-color: map_get($mask-white, background-color);
+}
+
+.sidebar-item--activated__container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+@keyframes switchThemeFromLightToDark {
+  0% {
+    background-color: map_get($mask-light, background-color);
+    color: map_get($mask-light, color);
+  }
+  100% {
+    background-color: map_get($mask-dark, background-color);
+    color: map_get($mask-dark, color);
+  }
+}
+.sidebar-item--activated {
+  background-color: map_get($mask-dark, background-color);
+  color: map_get($mask-dark, color);
+  cursor: pointer;
+  flex-grow: 1;
+  pointer-events: none;
+  animation: $sidebar-item-animation-duration ease-out 0s 1 switchThemeFromLightToDark;
+}
+@keyframes expandWidthToSidebarItemSize {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: $sidebar-item-size;
+  }
+}
+.sidebar-item--back {
+  justify-content: center;
+  padding: 0;
+  width: $sidebar-item-size;
+  animation: $sidebar-item-animation-duration ease-out 0s 1 expandWidthToSidebarItemSize;
+}
+
+.sidebar-space {
+  flex-grow: 1;
+  background-color: map_get($mask-moderate, background-color);
+}
+
+.sidebar-item__icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 1.5rem 0 0.5rem;
+  font-size: 1.25em;
+}
+
+.decorator__border--top {
+  border-top: map_get($border-light, border);
+}
+.decorator__border--right {
+  border-right: map_get($border-light, border);
+}
+.decorator__border--bottom {
+  border-bottom: map_get($border-light, border);
+}

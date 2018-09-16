@@ -14,6 +14,7 @@ import { EditorComponent } from './home-page/main/editor/editor.component';
 import { SettingsComponent } from './home-page/main/settings/settings.component';
 import { DynamicBarComponent } from './home-page/dynamic-bar/dynamic-bar.component';
 import {PlaybackControlStateService} from '../service/playback-control/playback-control-state.service';
+import { SidebarComponent } from './home-page/sidebar/sidebar.component';
 
 @NgModule({
   imports: [
@@ -36,7 +37,8 @@ import {PlaybackControlStateService} from '../service/playback-control/playback-
     SettingsTitleBarComponent,
     EditorComponent,
     SettingsComponent,
-    DynamicBarComponent
+    DynamicBarComponent,
+    SidebarComponent
   ]
 })
 export class ContentModule { }

@@ -1,0 +1,8 @@
+@import "../../../../../styles";
+
+.container {
+  background-color: map_get($mask-dark, background-color);
+  color: map_get($mask-dark, color);
+  width: 100%;
+  height: 100%;
+}

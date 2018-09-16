@@ -8,21 +8,18 @@
     <!-- Logo -->
     <header class="area__logo decorator__border--right decorator__border--bottom">
       <span>Logo</span><!-- Sharics -->
-      <router-outlet></router-outlet>
     </header>
-    <!-- Sidebar -->
-    <aside class="area__sidebar decorator__border--right">
-      <!--<router-outlet name="sidebar"></router-outlet>-->
-      <app-sidebar-normal></app-sidebar-normal>
+    <!-- Sidebar: Editor - normal; Settings - setting options -->
+    <aside class="area__sidebar">
+      <app-sidebar></app-sidebar>
     </aside>
     <!-- Dynamic bar: Button when not connected; Playback status bar when connected + in editor panel; Title in settings panel  -->
     <header class="area__dynamic-bar">
-      <!--<router-outlet name="dynamicBar"></router-outlet>-->
       <app-dynamic-bar></app-dynamic-bar>
     </header>
     <section class="area__main-panel">
-      <a routerLink="/editor">Editor</a>
-      <a routerLink="/settings">Settings</a>
+      <app-editor></app-editor>
+      <router-outlet></router-outlet>
     </section>
   </div>
 
