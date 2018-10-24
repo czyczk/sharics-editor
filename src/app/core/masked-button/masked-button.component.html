@@ -3,11 +3,10 @@
        [ngClass]="'masked_margin-' + backgroundTheme"
        [ngStyle]="{ 'width': '100%',
                     'height': marginTop }"></div>
-  <div class="component-row" #componentRow>
+  <div class="component-row">
     <div *ngIf="marginLeft"
          [ngClass]="'masked_margin-' + backgroundTheme"
-         [ngStyle]="{ 'width': marginLeft,
-                      'height': componentRowHeight + 'px' }"></div>
+         [ngStyle]="{ 'width': marginLeft }"></div>
     <button class="masked_component"
             [ngClass]="'masked_component-' + componentTheme"
             [ngStyle]="{ 'width': width,
@@ -21,8 +20,7 @@
     </button>
     <div *ngIf="marginRight"
          [ngClass]="'masked_margin-' + backgroundTheme"
-         [ngStyle]="{ 'width': marginRight,
-                      'height': componentRowHeight + 'px' }"></div>
+         [ngStyle]="{ 'width': marginRight }"></div>
   </div>
   <div *ngIf="marginBottom"
        [ngClass]="'masked_margin-' + backgroundTheme"

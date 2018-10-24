@@ -2,11 +2,10 @@ import {
   AfterContentChecked,
   AfterContentInit,
   AfterViewChecked,
-  AfterViewInit,
   ChangeDetectorRef,
   Component,
   ElementRef, EventEmitter,
-  Input, OnChanges, Output,
+  Input, Output,
   ViewChild
 } from '@angular/core';
 import {MaskedAbstractComponent} from '../masked-abstract/masked-abstract.component';
@@ -18,7 +17,7 @@ import {MaskedAbstractComponent} from '../masked-abstract/masked-abstract.compon
 })
 export class MaskedButtonComponent
   extends MaskedAbstractComponent
-  implements AfterContentInit, AfterContentChecked, AfterViewInit, AfterViewChecked {
+  implements AfterContentChecked {
 
   constructor(private cd: ChangeDetectorRef) {
     super();
@@ -29,7 +28,6 @@ export class MaskedButtonComponent
   protected defaultWidth = 'auto';
   protected defaultHeight = 'auto';
 
-  @ViewChild('componentRow') private componentRow: ElementRef<HTMLDivElement>;
   @ViewChild('contentContainer') private contentContainer: ElementRef<HTMLDivElement>;
 
   private _content: string;
@@ -43,36 +41,19 @@ export class MaskedButtonComponent
   }
   @Output() contentChanged = new EventEmitter<string>();
 
-  protected componentRowHeight: number;
-
   @Input() isPrimary = false;
 
   @Input() isDisabled = false;
 
-  // Styling
-  // protected componentClass: string;
-
-  ngAfterContentInit() {
-    this.content = this.contentContainer.nativeElement.innerHTML;
-  }
+  // ngAfterContentInit() {
+  //   this.content = this.contentContainer.nativeElement.innerHTML;
+  // }
 
   ngAfterContentChecked() {
     this.content = this.contentContainer.nativeElement.innerHTML;
   }
 
-  ngAfterViewInit() {
-    this.componentRowHeight = super.getHeightOfBlock(this.componentRow.nativeElement);
-  }
-
-  ngAfterViewChecked(): void {
-    this.cd.detectChanges();
-  }
-
-  // private selectAppropriateComponentClass() {
-  //   if (!this.isDisabled) {
-  //     this.componentClass = `masked_component-${this.componentTheme}`;
-  //   } else {
-  //     this.componentClass = `masked_component-${this.componentTheme}-disabled`;
-  //   }
+  // ngAfterViewChecked(): void {
+  //   this.cd.detectChanges();
   // }
 }

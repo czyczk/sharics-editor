@@ -6,6 +6,7 @@ import {TestsPageRoutingModule} from './tests-page-routing.module';
 import {SharedModule} from '../../shared/shared.module';
 import {CommonModule} from '@angular/common';
 import { TestBackgroundMaskComponent } from './test-background-mask/test-background-mask.component';
+import { TestMaskedButtonComponent } from './test-masked-button/test-masked-button.component';
 
 @NgModule({
   imports: [
@@ -26,6 +27,7 @@ import { TestBackgroundMaskComponent } from './test-background-mask/test-backgro
     TestAdaptiveImgComponent,
     TestAPIComponent,
     TestBackgroundMaskComponent,
+    TestMaskedButtonComponent,
   ]
 })
 export class TestsPageModule { }

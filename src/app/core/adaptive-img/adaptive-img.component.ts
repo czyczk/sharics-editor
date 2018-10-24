@@ -49,6 +49,11 @@ export class AdaptiveImgComponent implements OnInit, AfterViewInit {
    */
   @Input() useShadow = false;
 
+  /**
+   * Blur size. 0 to dismiss the blur. 0 by default.
+   */
+  @Input() blurSize = 0;
+
   @ViewChild('container') container: ElementRef<HTMLDivElement>;
   @ViewChild('imgContent') imgContent: ElementRef<HTMLImageElement>;
 

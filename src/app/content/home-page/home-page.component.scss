@@ -65,4 +65,6 @@
 
 .area__main-panel {
   grid-area: main-panel;
+  min-height: 100%;
+  max-height: 100%;
 }

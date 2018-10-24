@@ -3,7 +3,8 @@
        [src]="src ? src : placeholder"
        [class]="imgContentClass"
        [ngStyle]="{ 'border-radius': shape === 'circle' ? '50%' : '0',
-                    'border': borderStyle }"
+                    'border': borderStyle,
+                    'filter': 'blur(' + blurSize + 'px)' }"
        [ngClass]="{ 'img__shadow': useShadow }"
   />
 </div>

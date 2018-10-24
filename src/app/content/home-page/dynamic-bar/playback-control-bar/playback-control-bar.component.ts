@@ -1,7 +1,7 @@
 import {
   ChangeDetectorRef,
   Component,
-  HostBinding, OnDestroy,
+  HostBinding, HostListener, OnDestroy,
   OnInit,
 } from '@angular/core';
 import {PlaybackService} from '../../../../service/playback/playback.service';
@@ -11,6 +11,7 @@ import {AppSettingsService} from '../../../../service/app-settings/app-settings.
 import {AppSettings} from '../../../../shared/app-settings';
 import {TimestampUtil} from '../../../../util/timestamp-util';
 import {Subscription} from 'rxjs';
+import {KeymapUtil} from '../../../../util/keymap-util';
 
 @Component({
   selector: 'app-playback-control-bar',
@@ -134,6 +135,28 @@ export class PlaybackControlBarComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach(it => {
       it.unsubscribe();
     });
+  }
+
+  @HostListener('window:keydown', ['$event']) keymap(event: KeyboardEvent) {
+    const keymap = this.appSettings.playbackControlKeymap;
+    const targetShortcutStr = KeymapUtil.toKeyShortcut(event).toString();
+    if (!this.isConnected) {
+      return;
+    }
+
+    if (keymap.playOrPause.toStringArr().includes(targetShortcutStr)) {
+      event.preventDefault();
+      this.playOrPause();
+    } else if (keymap.stop.toStringArr().includes(targetShortcutStr)) {
+      event.preventDefault();
+      this.stop();
+    } else if (keymap.playPreviousTrack.toStringArr().includes(targetShortcutStr)) {
+      event.preventDefault();
+      this.playPreviousTrack();
+    } else if (keymap.playNextTrack.toStringArr().includes(targetShortcutStr)) {
+      event.preventDefault();
+      this.playNextTrack();
+    }
   }
 
   connectToServer() {

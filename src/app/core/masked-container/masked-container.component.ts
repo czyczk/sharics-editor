@@ -2,7 +2,7 @@ import {
   AfterContentInit,
   ChangeDetectorRef,
   Component,
-  Input
+  Input, OnChanges
 } from '@angular/core';
 import {MaskedAbstractComponent} from '../masked-abstract/masked-abstract.component';
 
@@ -11,9 +11,9 @@ import {MaskedAbstractComponent} from '../masked-abstract/masked-abstract.compon
   templateUrl: './masked-container.component.html',
   styleUrls: ['./masked-container.component.scss']
 })
-export class MaskedContainerComponent extends MaskedAbstractComponent implements AfterContentInit {
+export class MaskedContainerComponent extends MaskedAbstractComponent implements OnChanges {
 
-  constructor(private _cd: ChangeDetectorRef) {
+  constructor(private cd: ChangeDetectorRef) {
     super();
     this.width = this.defaultWidth;
     this.height = this.defaultHeight;
@@ -30,14 +30,15 @@ export class MaskedContainerComponent extends MaskedAbstractComponent implements
   @Input() bottomTransitionTo: 'dark' | 'moderate' | 'light' | 'white' = 'dark';
   @Input() isContentFullWidth = false;
 
-  ngAfterContentInit() {
-    this.contentClass = [];
+  ngOnChanges() {
+    const contentClass: string[] = [];
     if (this.componentTheme !== 'none') {
-      this.contentClass.push('masked_component-' + this.componentTheme);
+      contentClass.push('masked_component-' + this.componentTheme);
     }
     if (this.isContentFullWidth) {
-      this.contentClass.push('content--full-width');
+      contentClass.push('content--full-width');
     }
+    this.contentClass = contentClass;
   }
 
 }
