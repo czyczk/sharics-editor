@@ -1,0 +1,27 @@
+@import "../../../../../styles";
+
+.sidebar__item {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: map_get($shr-deep-grayer-blue, background-color);
+  color: map_get($shr-deep-grayer-blue, color);
+  height: 3.5rem;
+}
+
+.sidebar__item:hover {
+  background-color: map_get($shr-deep-grayer-blue, background-color-hover);
+  color: map_get($shr-deep-grayer-blue, color-hover);
+}
+
+.sidebar__item:active {
+  background-color: map_get($shr-deep-grayer-blue, background-color-active);
+  color: map_get($shr-deep-grayer-blue, color-active);
+}
+
+.sidebar__item__icon {
+  margin-left: 1.5rem;
+  margin-right: 1rem;
+  font-size: 1.3rem;
+}

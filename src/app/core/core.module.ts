@@ -6,6 +6,7 @@ import { MaskedInputDeprecatedComponent } from './deprecated/masked-input-deprec
 import { FormsModule } from '@angular/forms';
 import { MaskedButtonDeprecatedComponent } from './deprecated/masked-button-deprecated/masked-button-deprecated.component';
 import { MaskedContainerDeprecatedComponent } from './deprecated/masked-container-deprecated/masked-container-deprecated.component';
+import { ShrDropdownComponent } from './shr-dropdown/shr-dropdown.component';
 
 @NgModule({
   imports: [
@@ -18,6 +19,7 @@ import { MaskedContainerDeprecatedComponent } from './deprecated/masked-containe
     MaskedInputDeprecatedComponent,
     MaskedButtonDeprecatedComponent,
     MaskedContainerDeprecatedComponent,
+    ShrDropdownComponent,
   ],
   declarations: [
     AdaptiveImgComponent,
@@ -25,6 +27,7 @@ import { MaskedContainerDeprecatedComponent } from './deprecated/masked-containe
     MaskedInputDeprecatedComponent,
     MaskedButtonDeprecatedComponent,
     MaskedContainerDeprecatedComponent,
+    ShrDropdownComponent,
   ]
 })
 export class CoreModule { }

@@ -2,14 +2,129 @@
 
 @import "./icons.scss";
 
-html, body, input, button {
+html, body, input, button, select {
   margin: 0;
   padding: 0;
   font-size: 16px;
-  font-family: 'Segoe UI', 'Microsoft YaHei UI', 'Microsoft YaHei';
+  font-family: 'Segoe UI', 'Microsoft YaHei UI', 'Microsoft YaHei'; // TODO: Let the UI language decide
 }
 
 // Remove dotted outlines around buttons in Firefox
 button::-moz-focus-inner {
+  border: 0;
+}
+
+
+/** Color schemes */
+
+$shr-deep-gray-blue: (
+  background-color: #293541,
+  background-color-hover: #47515c,
+  background-color-active: #3b4651,
+  color: #9ea5ac,
+  color-hover: #efeff1,
+  color-active: #d4d4d6,
+  color-disabled: #e5e5e5,
+);
+
+$shr-deep-grayer-blue: (
+  background-color: #343A40,
+  background-color-hover: #4B535C,
+  background-color-active:#434A52,
+  color: #9ea5ac,
+  color-hover: #efeff1,
+  color-active: #d4d4d6,
+  color-disabled: #e5e5e5,
+);
+
+$shr-deep-gray-green: (
+  background-color: #294135,
+  background-color-hover: #475c51,
+  background-color-active: #3b5146,
+  color: #9eaca5,
+  color-hover: #eff1ef,
+  color-active: #d4d6d4,
+);
+
+$shr-moderate-gray: (
+  background-color: #ecedf3,
+  background-color-hover: #f5f6fb,
+  background-color-active: #dcdde3,
+  color: #525252,
+  color-hover: #828282,
+  color-active: #383d49,
+);
+
+$shr-bright-orange: (
+  background-color: #e57e31,
+  background-color-hover: #df782b,
+  color: rgba(white, 0.9),
+);
+
+/** Utils for flex box */
+
+.flex-grow {
+  flex-grow: 1;
+}
+
+
+/** <select></select> */
+
+input[type=range] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 100%;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  height: 16px;
+}
+input[type=range]:focus {
+  outline: none;
+}
+input[type=range]::-webkit-slider-runnable-track {
+  background: map_get($shr-deep-gray-blue, color);
+  height: 2px;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border: 0;
+  border-radius: 50%;
+  transform: translateY(-40%);
+  background: map_get($shr-deep-gray-blue, color);
+}
+input[type=range]::-webkit-slider-thumb:hover {
+  background: map_get($shr-deep-gray-blue, color-hover);
+}
+input[type=range]::-webkit-slider-thumb:active {
+  background: map_get($shr-deep-gray-blue, color-active);
+}
+input[type=range]::-moz-range-track {
+  background: map_get($shr-deep-gray-blue, color);
+  height: 2px;
+}
+input[type=range]::-moz-range-thumb {
+  -moz-appearance: none;
+  width: 14px;
+  height: 14px;
+  border: 0;
+  background: map_get($shr-deep-gray-blue, color);
+}
+input[type=range]::-moz-range-thumb:hover {
+  background: map_get($shr-deep-gray-blue, color-hover);
+}
+input[type=range]::-moz-range-thumb:active {
+  background: map_get($shr-deep-gray-blue, color-active);
+}
+
+
+/** <button></button> */
+
+button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border: 0;
 }

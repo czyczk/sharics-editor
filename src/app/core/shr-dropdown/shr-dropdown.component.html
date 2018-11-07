@@ -1,0 +1,22 @@
+<div class="dropdown-container"
+     [ngStyle]="{ 'height': height }">
+  <select [ngStyle]="{ 'margin': '0 ' + -arrowContainerSize + heightFormat + ' 0 0' }">
+    <option *ngFor="let option of options">
+      {{option.value}}
+    </option>
+  </select>
+  <div class="dropdown-arrow-container"
+       [ngStyle]="{ 'width': arrowContainerSize + heightFormat, 'height': arrowContainerSize + heightFormat }">
+    <!-- Comments for [ngStyle]:
+         0. The size of the arrow and the arrow container is relative to the height of the dropdown, in the same format
+         1. Set the borders (0.866 * (left + right) = top) to make it an equilateral triangle downward
+         2. Do math to make it in the center by setting 'left' and 'top' with the help of 'position: relative'
+     -->
+    <span class="dropdown-arrow"
+          [ngStyle]="{ 'border-left' : arrowSizeRatio * arrowContainerSize / 1.732 + heightFormat + ' solid transparent',
+                       'border-right': arrowSizeRatio * arrowContainerSize / 1.732 + heightFormat + ' solid transparent',
+                       'border-top'  : arrowSizeRatio * arrowContainerSize + heightFormat + ' solid white',
+                       'left'        : (0.5 - 0.5 * arrowSizeRatio) * arrowContainerSize + heightFormat,
+                       'top'         : (0.5 + 0.5 * 0.866 * arrowSizeRatio) * arrowContainerSize + heightFormat }"></span>
+  </div>
+</div>

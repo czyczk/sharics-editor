@@ -15,6 +15,11 @@ import { SettingsDeprecatedComponent } from './deprecated/home-page-deprecated/m
 import { DynamicBarDeprecatedComponent } from './deprecated/home-page-deprecated/dynamic-bar-deprecated/dynamic-bar-deprecated.component';
 import {PlaybackControlStateService} from '../service/playback-control/playback-control-state.service';
 import { SidebarDeprecatedComponent } from './deprecated/home-page-deprecated/sidebar-deprecated/sidebar-deprecated.component';
+import { HomePageComponent } from './home-page/home-page.component';
+import { EditorComponent } from './home-page/main/editor/editor.component';
+import { SettingsComponent } from './home-page/main/settings/settings.component';
+import { SidebarNormalComponent } from './home-page/sidebar/sidebar-normal/sidebar-normal.component';
+import { SidebarSettingsComponent } from './home-page/sidebar/sidebar-settings/sidebar-settings.component';
 
 @NgModule({
   imports: [
@@ -38,7 +43,12 @@ import { SidebarDeprecatedComponent } from './deprecated/home-page-deprecated/si
     EditorDeprecatedComponent,
     SettingsDeprecatedComponent,
     DynamicBarDeprecatedComponent,
-    SidebarDeprecatedComponent
+    SidebarDeprecatedComponent,
+    HomePageComponent,
+    EditorComponent,
+    SettingsComponent,
+    SidebarNormalComponent,
+    SidebarSettingsComponent
   ]
 })
 export class ContentModule { }

@@ -1,0 +1,40 @@
+@import "../../../styles";
+
+.dropdown-container {
+  display: flex;
+  flex-direction: row;
+  min-width: 150px;
+
+  select {
+    appearance: none;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(white, 0.5);
+    outline: none;
+    border: 1px solid map_get($shr-moderate-gray, color);
+    color: map_get($shr-moderate-gray, color);
+  }
+
+  .dropdown-arrow-container {
+    position: relative;
+    top: 0;
+    right: 0;
+    background-color: map_get($shr-moderate-gray, color);
+    pointer-events: none;
+
+    .dropdown-arrow {
+      width: 0;
+      height: 0;
+      position: relative;
+    }
+  }
+}
+.dropdown-container:hover {
+  select {
+    background-color: rgba(white, 0.9);
+    border-color: map_get($shr-moderate-gray, color-hover);
+  }
+  .dropdown-arrow-container {
+    background-color: map_get($shr-moderate-gray, color-hover);
+  }
+}

@@ -1,0 +1,27 @@
+<div class="main-panel__editor-toolbar-container">
+  <div class="main-panel__editor-toolbar__btn">
+    <i class="anticon anticon-plus-square-o"></i>
+  </div>
+  <div class="main-panel__editor-toolbar__btn">
+    <i class="anticon anticon-minus-square-o"></i>
+  </div>
+  <div class="main-panel__editor-toolbar__btn">
+    <i class="anticon anticon-form"></i>
+  </div>
+  <div class="main-panel__editor-toolbar__vertical-separator"></div>
+  <div class="main-panel__editor-toolbar__btn">
+    <i class="anticon anticon-edit"></i>
+  </div>
+  <div class="main-panel__editor-toolbar__btn">
+    <i class="anticon anticon-edit"></i>
+  </div>
+  <div class="flex-grow"></div>
+  <shr-dropdown height="30px" [options]="languageOptions"></shr-dropdown>
+</div>
+<div class="main-panel__editor-content-container">
+  <div class="main-panel__text-display-container">
+    <div class="main-panel__text-scroller"
+         [innerHTML]="highlighted"
+         contenteditable="true"></div>
+  </div>
+</div>
