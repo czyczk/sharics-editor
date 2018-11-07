@@ -1,0 +1,107 @@
+<div>
+  <!-- Full screened content -->
+  <div class="content-container">
+    <!-- Logo -->
+    <header class="area__logo">
+      <span>Logo</span><!-- Sharics -->
+    </header>
+    <!-- Sidebar: Editor - normal; Settings - setting options -->
+    <aside class="area__sidebar">
+      <div class="sidebar__item">
+        <i class="anticon anticon-folder-open sidebar__item__icon"></i>
+        <div>Open</div>
+      </div>
+      <div class="sidebar__item">
+        <i class="anticon anticon-save sidebar__item__icon"></i>
+        <div>Save as...</div>
+      </div>
+    </aside>
+    <!-- Dynamic bar: Button when not connected; Playback status bar when connected + in editor panel; Title in settings panel  -->
+    <header class="area__title-bar">
+      <div class="title-bar__text">Editor</div>
+      <div class="flex-grow"></div>
+      <div class="title-bar__btn-container">
+        <div class="title-bar__btn">
+          <i class="anticon anticon-setting"></i>
+        </div>
+      </div>
+    </header>
+
+    <section class="area__main-panel">
+      <div class="main-panel__editor-toolbar-container">
+        <div class="main-panel__editor-toolbar__btn">
+          <i class="anticon anticon-plus-square-o"></i>
+        </div>
+        <div class="main-panel__editor-toolbar__btn">
+          <i class="anticon anticon-minus-square-o"></i>
+        </div>
+        <div class="main-panel__editor-toolbar__btn">
+          <i class="anticon anticon-form"></i>
+        </div>
+        <div class="main-panel__editor-toolbar__vertical-separator"></div>
+        <div class="main-panel__editor-toolbar__btn">
+          <i class="anticon anticon-edit"></i>
+        </div>
+        <div class="main-panel__editor-toolbar__btn">
+          <i class="anticon anticon-edit"></i>
+        </div>
+        <div class="flex-grow"></div>
+        <div class="select-container">
+          <select class="main-panel__editor-toolbar__language-select">
+            <option>English</option>
+            <option>Japanese</option>
+            <option>Simplified Chinese</option>
+            <option>Traditional Chinese</option>
+          </select>
+          <div class="select-arrow-container">
+            <span class="select-arrow"></span>
+          </div>
+        </div>
+      </div>
+      <div class="main-panel__editor-content-container">
+        <div class="main-panel__text-display-container">
+          <div class="main-panel__text-scroller"
+               [innerHTML]="highlighted"
+               contenteditable="true"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="area__playback-control-bar">
+      <div class="playback-control-bar__cover-container">
+        <app-adaptive-img src="../../../../assets/bg-stub/bg03.jpg" width="5rem" height="5rem"></app-adaptive-img>
+      </div>
+      <div class="playback-control-bar__btn-container">
+        <button id="btn-previous-track" class="playback-control-bar__btn playback-control-bar__btn__round">
+          <i class="anticon anticon-step-backward"></i>
+        </button>
+        <button id="btn-play-or-pause" class="playback-control-bar__btn playback-control-bar__btn__round playback-control-bar__btn__large">
+          <i class="anticon anticon-caret-right"></i>
+        </button>
+        <button id="btn-next-track" class="playback-control-bar__btn playback-control-bar__btn__round">
+          <i class="anticon anticon-step-forward"></i>
+        </button>
+      </div>
+      <div class="playback-control-bar__middle-container">
+        <div class="playback-control-bar__middle-container__first-row">
+          <div class="playback-control-bar__middle-container__info-container">
+            <span>Artist - Title</span>
+          </div>
+          <div class="flex-grow"></div>
+          <div class="playback-control-bar__middle-container__position-container">
+            <span>0:23 / 4:10</span>
+          </div>
+        </div>
+        <div class="playback-control-bar__middle-container__position-slider-container">
+          <input type="range" class="playback-control-bar__position-slider" />
+        </div>
+      </div>
+      <div class="playback-control-bar__btn-container">
+        <button id="btn-volume" class="playback-control-bar__btn playback-control-bar__btn__large">
+          <i class="anticon anticon-sound"></i>
+        </button>
+      </div>
+    </section>
+  </div>
+
+</div>

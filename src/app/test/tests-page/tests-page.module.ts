@@ -7,6 +7,7 @@ import {SharedModule} from '../../shared/shared.module';
 import {CommonModule} from '@angular/common';
 import { TestBackgroundMaskComponent } from './test-background-mask/test-background-mask.component';
 import { TestMaskedButtonComponent } from './test-masked-button/test-masked-button.component';
+import { TestDemo2Component } from './test-demo2/test-demo2.component';
 
 @NgModule({
   imports: [
@@ -28,6 +29,7 @@ import { TestMaskedButtonComponent } from './test-masked-button/test-masked-butt
     TestAPIComponent,
     TestBackgroundMaskComponent,
     TestMaskedButtonComponent,
+    TestDemo2Component,
   ]
 })
 export class TestsPageModule { }
