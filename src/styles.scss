@@ -9,6 +9,11 @@ html, body, input, button {
   font-family: 'Segoe UI', 'Microsoft YaHei UI', 'Microsoft YaHei';
 }
 
+// Remove dotted outlines around buttons in Firefox
+button::-moz-focus-inner {
+  border: 0;
+}
+
 $mask-dark: (
     background-color: rgba(40, 40, 40, 0.45),
     color: white

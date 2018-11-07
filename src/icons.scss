@@ -37,20 +37,28 @@ $anticon-woff-font-path: "/assets/fonts/iconfont/iconfont.woff";
 @include generate_anticon_class(up, "\e61e");
 @include generate_anticon_class(right, "\e61f");
 @include generate_anticon_class(left, "\e620");
+@include generate_anticon_class(minus-square-o, "\e621");
 @include generate_anticon_class(minus, "\e624");
 @include generate_anticon_class(plus, "\e627");
 @include generate_anticon_class(check, "\e632");
 @include generate_anticon_class(close, "\e633");
 @include generate_anticon_class(cross, "\e633");
 @include generate_anticon_class(pause, "\e63d");
+@include generate_anticon_class(plus-square-o, "\e645");
 @include generate_anticon_class(ellipsis, "\e647");
 @include generate_anticon_class(loading, "\e64d");
 @include generate_anticon_class(save, "\e669");
 @include generate_anticon_class(setting, "\e672");
 @include generate_anticon_class(edit, "\e692");
 @include generate_anticon_class(folder-open, "\e699");
+@include generate_anticon_class(plus-square, "\e6c0");
+@include generate_anticon_class(minus-square, "\e6c1");
+@include generate_anticon_class(close-square, "\e6c2");
+@include generate_anticon_class(check-square, "\e6c4");
 @include generate_anticon_class(fast-backward, "\e6c6");
 @include generate_anticon_class(fast-forward, "\e6c7");
+@include generate_anticon_class(sound, "\e6e9");
+@include generate_anticon_class(form, "\e996");
 
 
 .anticon-display::before {
