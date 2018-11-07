@@ -1,16 +1,16 @@
 import { NgModule } from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {SidebarNormalComponent} from './home-page/sidebar/sidebar-normal/sidebar-normal.component';
-import {SidebarSettingsComponent} from './home-page/sidebar/sidebar-settings/sidebar-settings.component';
-import {HomePageComponent} from './home-page/home-page.component';
-import {PlaybackControlBarComponent} from './home-page/dynamic-bar/playback-control-bar/playback-control-bar.component';
-import {SettingsTitleBarComponent} from './home-page/dynamic-bar/settings-title-bar/settings-title-bar.component';
-import {EditorComponent} from './home-page/main/editor/editor.component';
-import {SettingsComponent} from './home-page/main/settings/settings.component';
+import {SidebarNormalDeprecatedComponent} from './deprecated/home-page-deprecated/sidebar-deprecated/sidebar-normal-deprecated/sidebar-normal-deprecated.component';
+import {SidebarSettingsDeprecatedComponent} from './deprecated/home-page-deprecated/sidebar-deprecated/sidebar-settings-deprecated/sidebar-settings-deprecated.component';
+import {HomePageDeprecatedComponent} from './deprecated/home-page-deprecated/home-page-deprecated.component';
+import {PlaybackControlBarDeprecatedComponent} from './deprecated/home-page-deprecated/dynamic-bar-deprecated/playback-control-bar-deprecated/playback-control-bar-deprecated.component';
+import {SettingsTitleBarDeprecatedComponent} from './deprecated/home-page-deprecated/dynamic-bar-deprecated/settings-title-bar-deprecated/settings-title-bar-deprecated.component';
+import {EditorDeprecatedComponent} from './deprecated/home-page-deprecated/main-deprecated/editor-deprecated/editor-deprecated.component';
+import {SettingsDeprecatedComponent} from './deprecated/home-page-deprecated/main-deprecated/settings-deprecated/settings-deprecated.component';
 
 // Workaround to fix the bug as in https://github.com/angular/angular/issues/16406#issuecomment-327348947
 const routes: Routes = [
-  { path: '', component: HomePageComponent, children: [
+  { path: '', component: HomePageDeprecatedComponent, children: [
       { path: 'editor', children: [
           // { path: '', component: EditorComponent },
           // { path: '', component: SidebarNormalComponent, outlet: 'sidebar' },

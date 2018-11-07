@@ -1,0 +1,46 @@
+<!-- Show the connect button if it's not connected -->
+<app-masked-container-deprecated *ngIf="!isConnected" [useBottomTransition]="'true'">
+  <app-masked-button-deprecated id="btn-cts"
+                                (click)="connectToServer()"
+                                [isDisabled]="btnCtsState === 'operating' || btnCtsState === 'on-failure'">
+    <div translate>{{componentName}}.btn-cts.{{btnCtsState}}</div>
+  </app-masked-button-deprecated>
+</app-masked-container-deprecated>
+
+<!-- Show the playback control bar if it's connected -->
+<app-masked-container-deprecated *ngIf="isConnected" [useBottomTransition]="'true'" [isContentFullWidth]="'true'">
+  <section class="playback-controls__container">
+    <!-- Current state -->
+    <div class="playback-controls__text playback-state" translate>
+      playback-control-bar.playback-state.{{playbackState}}
+    </div>
+    <div class="flex-space"></div>
+    <!-- Playback control buttons -->
+    <app-masked-button-deprecated id="btn-previous-track" [title]="componentName + '.btn-previous-track.title' | translate"
+                                  [width]="btnPlaybackControlsSize" [height]="btnPlaybackControlsSize" (click)="playPreviousTrack()">
+      <i class="anticon anticon-step-backward"></i>
+    </app-masked-button-deprecated>
+    <app-masked-button-deprecated id="btn-play-or-pause" [title]="componentName + '.btn-play-or-pause.title' | translate"
+                                  [width]="btnPlaybackControlsSize" [height]="btnPlaybackControlsSize" (click)="playOrPause()">
+      <i *ngIf="playbackState !== 'playing'; else pauseIcon" class="anticon anticon-caret-right"></i>
+      <ng-template #pauseIcon>
+        <i class="anticon anticon-pause"></i>
+      </ng-template>
+    </app-masked-button-deprecated>
+    <app-masked-button-deprecated id="btn-stop" [title]="componentName + '.btn-stop.title' | translate"
+                                  [width]="btnPlaybackControlsSize" [height]="btnPlaybackControlsSize" (click)="stop()">
+      <i class="anticon anticon-stop"></i>
+    </app-masked-button-deprecated>
+    <app-masked-button-deprecated id="btn-next-track" [title]="componentName + '.btn-next-track.title' | translate"
+                                  [width]="btnPlaybackControlsSize" [height]="btnPlaybackControlsSize" (click)="playNextTrack()">
+      <i class="anticon anticon-step-forward"></i>
+    </app-masked-button-deprecated>
+    <!-- Playback position -->
+    <div class="flex-space"></div>
+    <div class="playback-controls__text playback-position">
+      <div *ngIf="playbackState !== 'idle'">
+        {{playbackPosition}} / {{trackLength}}
+      </div>
+    </div>
+  </section>
+</app-masked-container-deprecated>

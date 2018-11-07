@@ -1,0 +1,30 @@
+@import "../../../../../../styles-deprecated";
+
+.playback-controls__container {
+  display: flex;
+  justify-content: stretch;
+  width: 100%;
+}
+
+.flex-space {
+  flex-grow: 1;
+  background-color: map_get($mask-moderate, background-color);
+}
+
+.playback-controls__text {
+  display: flex;
+  align-items: center;
+  background-color: map_get($mask-moderate, background-color);
+  color: map_get($mask-moderate, color);
+}
+
+.playback-state {
+  width: 16rem;
+  padding-left: 2rem;
+}
+
+.playback-position {
+  justify-content: flex-end;
+  width: 16rem;
+  padding-right: 2rem;
+}

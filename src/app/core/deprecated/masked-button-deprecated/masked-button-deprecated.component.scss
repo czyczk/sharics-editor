@@ -1,0 +1,12 @@
+@import "../masked-component-deprecated";
+
+.content_container {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+}
+
+.masked_component-light:active {
+  background-color: map_get($mask-light, background-color-focus);
+  border-color: transparent;
+}

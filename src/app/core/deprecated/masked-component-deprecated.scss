@@ -1,0 +1,64 @@
+@import "../../../styles-deprecated";
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.component-row {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+}
+
+div .masked_margin-dark {
+  background-color: map_get($mask-dark, background-color);
+}
+div .masked_margin-moderate {
+  background-color: map_get($mask-moderate, background-color);
+}
+div .masked_margin-light {
+  background-color: map_get($mask-light, background-color);
+}
+div .masked_margin-white {
+  background-color: map_get($mask-white, background-color);
+}
+
+.masked_component {
+  margin: 0;
+  padding: 0.4rem;
+  border: map_get($border-light, border);
+  box-sizing: border-box;
+  border-width: 2.5px;
+  outline: 0;
+}
+.masked_component:active {
+  border-color: map_get($border-light, border-color-active);
+}
+
+.masked_component-dark {
+  background-color: map_get($mask-dark, background-color);
+  color: map_get($mask-dark, color);
+}
+.masked_component-moderate {
+  background-color: map_get($mask-moderate, background-color);
+  color: map_get($mask-moderate, color);
+}
+.masked_component-light {
+  background-color: map_get($mask-light, background-color);
+  color: map_get($mask-light, color);
+}
+.masked_component-light:disabled {
+  background-color: map_get($mask-light, background-color-disabled);
+  color: map_get($mask-light, color-disabled);
+  pointer-events: none;
+}
+.masked_component-light:hover {
+  background-color: map_get($mask-light, background-color-hover);
+}
+.masked_component-white {
+  background-color: map_get($mask-white, background-color);
+  color: map_get($mask-dark, color);
+}

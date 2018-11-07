@@ -1,0 +1,5 @@
+@import "../masked-component-deprecated";
+
+.masked_component-light:focus {
+  background-color: map_get($mask-light, background-color-focus);
+}
