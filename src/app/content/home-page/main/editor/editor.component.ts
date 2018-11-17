@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import {ShrDropdownItem} from '../../../../shared/ShrDropdownItem';
+import {Component, HostBinding, OnInit} from '@angular/core';
+import {ShrDropdownItem} from '../../../../core/shr-dropdown/ShrDropdownItem';
 import {AppSettings} from '../../../../shared/app-settings';
 import {EditorUtil} from '../../../../util/editor-util';
 
@@ -38,6 +38,8 @@ export class EditorComponent implements OnInit {
   private appSettings: AppSettings = new AppSettings();
 
   constructor() { }
+
+  @HostBinding('style.height') height = '100%';
 
   ngOnInit() {
     this.appSettings.editorTheme.timestampColor = '#e57e31';

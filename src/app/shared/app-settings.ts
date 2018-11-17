@@ -36,6 +36,15 @@ class PlaybackControlKeymap {
   public playNextTrack = PlaybackControlKeymap.defaultPlayNextTrack;
 }
 
+class TitleFormatting {
+  // Default settings
+  private static readonly defaultPlaybackControlBarFormat = '[%artist% - ]%title%';
+  private static readonly defaultFileSavingFormat = '[%artist% - ]%title%';
+
+  public playbackControlBarFormat = TitleFormatting.defaultPlaybackControlBarFormat;
+  public fileSavingFormat = TitleFormatting.defaultFileSavingFormat;
+}
+
 class EditorKeymap {
   // Default settings
   private static readonly defaultInsertTimestamp = new KeyShortcutSet(new KeyShortcut('F9'), new KeyShortcut('+'));
@@ -72,12 +81,13 @@ export class BreakpointStrategy {
 }
 
 export class AppSettings {
-  // Expose internal classes
+  // Expose internal classes for public access to some constants
   public static NetworkSettings = NetworkSettings;
   public static LocaleSettings = LocaleSettings;
 
   public networkSettings = new NetworkSettings();
   public localeSettings = new LocaleSettings();
+  public titleFormatting = new TitleFormatting();
   public playbackControlKeymap = new PlaybackControlKeymap();
   public editorKeymap = new EditorKeymap();
   public editorTheme = new EditorTheme();

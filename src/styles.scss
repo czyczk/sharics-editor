@@ -9,9 +9,14 @@ html, body, input, button, select {
   font-family: 'Segoe UI', 'Microsoft YaHei UI', 'Microsoft YaHei'; // TODO: Let the UI language decide
 }
 
-// Remove dotted outlines around buttons in Firefox
-button::-moz-focus-inner {
+// Remove dotted outlines around components in Firefox
+*::-moz-focus-inner {
   border: 0;
+}
+
+// Remove glowing outlines around components in Chrome
+*:focus {
+  outline: none;
 }
 
 
@@ -21,6 +26,7 @@ $shr-deep-gray-blue: (
   background-color: #293541,
   background-color-hover: #47515c,
   background-color-active: #3b4651,
+  background-color-disabled: #353535,
   color: #9ea5ac,
   color-hover: #efeff1,
   color-active: #d4d4d6,
@@ -31,6 +37,7 @@ $shr-deep-grayer-blue: (
   background-color: #343A40,
   background-color-hover: #4B535C,
   background-color-active:#434A52,
+  background-color-disabled: #3A3A3A,
   color: #9ea5ac,
   color-hover: #efeff1,
   color-active: #d4d4d6,

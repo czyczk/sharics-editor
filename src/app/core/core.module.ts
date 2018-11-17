@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { MaskedButtonDeprecatedComponent } from './deprecated/masked-button-deprecated/masked-button-deprecated.component';
 import { MaskedContainerDeprecatedComponent } from './deprecated/masked-container-deprecated/masked-container-deprecated.component';
 import { ShrDropdownComponent } from './shr-dropdown/shr-dropdown.component';
+import { LongPressDirective } from './directive/long-press/long-press.directive';
 
 @NgModule({
   imports: [
@@ -20,6 +21,7 @@ import { ShrDropdownComponent } from './shr-dropdown/shr-dropdown.component';
     MaskedButtonDeprecatedComponent,
     MaskedContainerDeprecatedComponent,
     ShrDropdownComponent,
+    LongPressDirective,
   ],
   declarations: [
     AdaptiveImgComponent,
@@ -28,6 +30,7 @@ import { ShrDropdownComponent } from './shr-dropdown/shr-dropdown.component';
     MaskedButtonDeprecatedComponent,
     MaskedContainerDeprecatedComponent,
     ShrDropdownComponent,
+    LongPressDirective,
   ]
 })
 export class CoreModule { }

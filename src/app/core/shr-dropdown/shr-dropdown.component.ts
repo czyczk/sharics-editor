@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ShrDropdownItem} from '../../shared/ShrDropdownItem';
+import {ShrDropdownItem} from './ShrDropdownItem';
 
 @Component({
   selector: 'shr-dropdown',
@@ -40,8 +40,6 @@ export class ShrDropdownComponent implements OnInit {
     // Extract the size
     this.heightValue = parseInt(size.substring(0, i), 10);
     this.heightFormat = size.substring(i);
-    console.log(`heightValue: ${this.heightValue}`);
-    console.log(`heightFormat: ${this.heightFormat}`);
 
     // Set the properties that help calculate style of the triangle arrow
     this.arrowContainerSize = this.heightValue;

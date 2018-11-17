@@ -13,6 +13,7 @@
             ["app", "shr"],
             "kebab-case"
         ],
-        "no-input-rename": false
+        "no-input-rename": false,
+        "no-redundant-jsdoc": false
     }
 }

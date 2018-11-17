@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {AppSettings} from '../../shared/app-settings';
 import {EditorUtil} from '../../util/editor-util';
-import {ShrDropdownItem} from '../../shared/ShrDropdownItem';
+import {ShrDropdownItem} from '../../core/shr-dropdown/ShrDropdownItem';
 
 @Component({
   selector: 'app-home-page',

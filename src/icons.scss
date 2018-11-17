@@ -47,6 +47,7 @@ $anticon-woff-font-path: "/assets/fonts/iconfont/iconfont.woff";
 @include generate_anticon_class(plus-square-o, "\e645");
 @include generate_anticon_class(ellipsis, "\e647");
 @include generate_anticon_class(loading, "\e64d");
+@include generate_anticon_class(disconnect, "\e64f");
 @include generate_anticon_class(save, "\e669");
 @include generate_anticon_class(setting, "\e672");
 @include generate_anticon_class(edit, "\e692");

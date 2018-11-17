@@ -10,19 +10,20 @@
     "settings": "设置"
   },
   "playback-control-bar": {
-    "btn-cts": {
-      "default": "连接服务器",
-      "operating": "正在连接……",
-      "on-failure": "失败"
-    },
+    "btn-cts.title": "连接服务器",
     "btn-previous-track.title": "上一首",
-    "btn-play-or-pause.title": "播放 / 暂停",
-    "btn-stop.title": "停止",
+    "btn-play-or-pause.title": "播放 / 暂停（长按以停止）",
     "btn-next-track.title": "下一首",
     "playback-state": {
       "idle": "闲置",
       "playing": "正在播放",
       "paused": "暂停"
+    },
+    "title-container": {
+      "no-playing-item": "无播放曲目。"
+    },
+    "toast": {
+      "unable-to-connect": "无法连接至服务器。"
     }
   },
   "settings-title-bar": {

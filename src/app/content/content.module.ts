@@ -20,6 +20,8 @@ import { EditorComponent } from './home-page/main/editor/editor.component';
 import { SettingsComponent } from './home-page/main/settings/settings.component';
 import { SidebarNormalComponent } from './home-page/sidebar/sidebar-normal/sidebar-normal.component';
 import { SidebarSettingsComponent } from './home-page/sidebar/sidebar-settings/sidebar-settings.component';
+import { TItleBarComponent } from './home-page/title-bar/title-bar.component';
+import { PlaybackControlBarComponent } from './home-page/playback-control-bar/playback-control-bar.component';
 
 @NgModule({
   imports: [
@@ -48,7 +50,9 @@ import { SidebarSettingsComponent } from './home-page/sidebar/sidebar-settings/s
     EditorComponent,
     SettingsComponent,
     SidebarNormalComponent,
-    SidebarSettingsComponent
+    SidebarSettingsComponent,
+    TItleBarComponent,
+    PlaybackControlBarComponent
   ]
 })
 export class ContentModule { }

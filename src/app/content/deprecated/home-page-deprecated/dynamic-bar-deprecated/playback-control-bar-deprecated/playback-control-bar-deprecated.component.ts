@@ -12,6 +12,7 @@ import {AppSettings} from '../../../../../shared/app-settings';
 import {TimestampUtil} from '../../../../../util/timestamp-util';
 import {Subscription} from 'rxjs';
 import {KeymapUtil} from '../../../../../util/keymap-util';
+import Timer = NodeJS.Timer;
 
 @Component({
   selector: 'app-playback-control-bar-deprecated',
@@ -65,7 +66,7 @@ export class PlaybackControlBarDeprecatedComponent implements OnInit, OnDestroy 
 
   // For playback position
   playbackPosition: string;
-  playbackPositionIntervalId: number;
+  playbackPositionInterval: Timer;
   trackLength: string;
 
   @HostBinding('style.width') width = '100%';
@@ -105,8 +106,8 @@ export class PlaybackControlBarDeprecatedComponent implements OnInit, OnDestroy 
   }
   private onPlaybackStateChanged(val: 'idle' | 'playing' | 'paused') {
     // Clear the previous playback position interval
-    if (this.playbackPositionIntervalId) {
-      clearInterval(this.playbackPositionIntervalId);
+    if (this.playbackPositionInterval) {
+      clearInterval(this.playbackPositionInterval);
     }
     // If the playback is active, update track length (300ms after playback is started) and clear the previous playback position interval
     if (val === 'playing' || val === 'paused') {
@@ -115,7 +116,7 @@ export class PlaybackControlBarDeprecatedComponent implements OnInit, OnDestroy 
       }, 300);
       if (val === 'playing') {
         // If it's playing, update playback position every 200ms.
-        this.playbackPositionIntervalId = setInterval(() => {
+        this.playbackPositionInterval = setInterval(() => {
           this.updatePlaybackPosition();
         }, 200);
       } else if (val === 'paused') {
@@ -129,8 +130,8 @@ export class PlaybackControlBarDeprecatedComponent implements OnInit, OnDestroy 
   }
 
   ngOnDestroy() {
-    if (this.playbackPositionIntervalId) {
-      clearInterval(this.playbackPositionIntervalId);
+    if (this.playbackPositionInterval) {
+      clearInterval(this.playbackPositionInterval);
     }
     this.subscriptions.forEach(it => {
       it.unsubscribe();
@@ -259,8 +260,8 @@ export class PlaybackControlBarDeprecatedComponent implements OnInit, OnDestroy 
 
   private handleError(err) {
     console.error(err);
-    if (this.playbackPositionIntervalId) {
-      clearInterval(this.playbackPositionIntervalId);
+    if (this.playbackPositionInterval) {
+      clearInterval(this.playbackPositionInterval);
     }
     this.isConnected = false;
   }

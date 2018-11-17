@@ -1,0 +1,62 @@
+<div class="playback-control-bar-toast-container" toastContainer></div>
+<div class="playback-control-bar-container">
+  <!-- Cover button -->
+  <div class="playback-control-bar__cover-container">
+    <app-adaptive-img *ngIf="isConnected" src="../../../../assets/bg-stub/bg03.jpg" width="5rem" height="5rem"></app-adaptive-img>
+    <button *ngIf="!isConnected"
+            id="btn-cts"
+            class="playback-control-bar__disconnected-mask"
+            (click)="connectToServer()"
+            [disabled]="btnCtsState === 'operating' || btnCtsState === 'on-failure'"
+            [title]="componentName + '.btn-cts.title' | translate">
+      <i class="anticon anticon-disconnect"></i>
+    </button>
+  </div>
+  <!-- Playback control buttons -->
+  <div class="playback-control-bar__playback-btn-container">
+    <button id="btn-previous-track" class="playback-control-bar__btn playback-control-bar__btn__round"
+            (click)="playPreviousTrack()"
+            [title]="componentName + '.btn-previous-track.title' | translate">
+      <i class="anticon anticon-step-backward"></i>
+    </button>
+    <button id="btn-play-or-pause" class="playback-control-bar__btn playback-control-bar__btn__round playback-control-bar__btn__large"
+            longPress (longPress)="stop()" (earlyRelease)="playOrPause()"
+            [title]="componentName + '.btn-play-or-pause.title' | translate">
+      <i *ngIf="playbackState !== 'playing'; else pauseIcon" class="anticon anticon-caret-right"></i>
+      <ng-template #pauseIcon>
+        <i class="anticon anticon-pause"></i>
+      </ng-template>
+    </button>
+    <button id="btn-next-track" class="playback-control-bar__btn playback-control-bar__btn__round"
+            (click)="playNextTrack()"
+            [title]="componentName + '.btn-next-track.title' | translate">
+      <i class="anticon anticon-step-forward"></i>
+    </button>
+  </div>
+  <!-- Track title & position slider -->
+  <div class="playback-control-bar__middle-container">
+    <div class="playback-control-bar__middle-container__first-row">
+      <div class="playback-control-bar__middle-container__title-container">
+        <span *ngIf="playbackState !== 'idle' && title; else idleTitle">{{title}}</span>
+        <ng-template #idleTitle>
+          <span translate>{{componentName}}.title-container.no-playing-item</span>
+        </ng-template>
+      </div>
+      <div class="flex-grow"></div>
+      <div class="playback-control-bar__middle-container__position-container">
+        <!-- The current playback position and the track length won't be shown if it's idle or any of them is unavailable -->
+        <span *ngIf="playbackState !== 'idle' && playbackPosition && trackLength">{{playbackPosition.formatDisplay()}} / {{trackLength.formatDisplay()}}</span>
+      </div>
+    </div>
+    <div class="playback-control-bar__middle-container__position-slider-container">
+      <input type="range" class="playback-control-bar__position-slider" />
+    </div>
+  </div>
+  <!-- Volume button -->
+  <div class="playback-control-bar__volume-btn-container">
+    <button id="btn-volume" class="playback-control-bar__btn playback-control-bar__btn__large">
+      <i class="anticon anticon-sound"></i>
+    </button>
+  </div>
+
+</div>

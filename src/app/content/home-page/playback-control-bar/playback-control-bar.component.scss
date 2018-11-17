@@ -1,0 +1,127 @@
+@import "../../../../styles";
+
+/* The height of this part is 5rem according to the grid settings in the homepage. */
+$playback-control-bar-height: 5rem;
+
+.playback-control-bar-toast-container {
+  position: absolute;
+  left: 0.5rem;
+  bottom: 8.8rem;
+}
+
+.playback-control-bar-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background-color: map_get($shr-deep-gray-blue, background-color);
+  color: map_get($shr-deep-gray-blue, color);
+}
+
+.playback-control-bar__cover-container {
+}
+
+.playback-control-bar__disconnected-mask {
+  width: $playback-control-bar-height;
+  height: $playback-control-bar-height;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(white, 0.1);
+  color: map_get($shr-deep-gray-blue, color);
+
+  // Enlarge the icon inside
+  i {
+    font-size: 200%;
+  }
+}
+.playback-control-bar__disconnected-mask:hover {
+  background-color: map_get($shr-deep-gray-blue, background-color-hover);
+  color: map_get($shr-deep-gray-blue, color-hover);
+}
+.playback-control-bar__disconnected-mask:active {
+  background-color: map_get($shr-deep-gray-blue, background-color-active);
+  color: map_get($shr-deep-grayer-blue, color-active);
+}
+.playback-control-bar__disconnected-mask:disabled {
+  background-color: map_get($shr-deep-gray-blue, background-color-disabled);
+  color: map_get($shr-deep-gray-blue, color-disabled);
+}
+
+.playback-control-bar__playback-btn-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: 0 2rem;
+}
+
+.playback-control-bar__middle-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  flex-grow: 1;
+}
+.playback-control-bar__middle-container__first-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 6px 0;
+  width: 100%;
+}
+.playback-control-bar__middle-container__title-container {
+  font-size: 0.75rem;
+  min-height: 0.75rem;
+}
+.playback-control-bar__middle-container__position-container {
+  font-size: 0.75rem;
+}
+.playback-control-bar__middle-container__position-slider-container {
+  margin: 2px 0;
+  width: 100%;
+}
+
+.playback-control-bar__volume-btn-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: 0 2rem;
+}
+
+.playback-control-bar__btn {
+  width: 2.3rem;
+  height: 2.3rem;
+  margin: 0 0.5rem;
+  background-color: map_get($shr-deep-gray-blue, background-color);
+  color: map_get($shr-deep-gray-blue, color);
+  border: 0 solid map_get($shr-deep-gray-blue, color);
+}
+.playback-control-bar__btn:hover {
+  background-color: map_get($shr-deep-gray-blue, background-color-hover);
+  color: map_get($shr-deep-gray-blue, color-hover);
+  border-color: map_get($shr-deep-gray-blue, color-hover);
+}
+.playback-control-bar__btn:active {
+  background-color: map_get($shr-deep-gray-blue, background-color-active);
+  color: map_get($shr-deep-gray-blue, color-active);
+  border-color: map_get($shr-deep-gray-blue, color-active);
+}
+
+.playback-control-bar__btn__large {
+  width: 2.6rem;
+  height: 2.6rem;
+  font-size: 130%;
+}
+
+.playback-control-bar__btn__round {
+  border-radius: 50%;
+  border-width: 2px;
+}
+
+.playback-control-bar__position-slider {
+}

@@ -10,19 +10,20 @@
     "settings": "Settings"
   },
   "playback-control-bar": {
-    "btn-cts": {
-      "default": "Connect to server",
-      "operating": "Connecting...",
-      "on-failure": "Failed"
-    },
+    "btn-cts.title": "Connect to server",
     "btn-previous-track.title": "Previous track",
-    "btn-play-or-pause.title": "Play / pause",
-    "btn-stop.title": "Stop",
+    "btn-play-or-pause.title": "Play / pause (Long press to stop)",
     "btn-next-track.title": "Next track",
     "playback-state": {
       "idle": "Idle",
       "playing": "Playing",
       "paused": "Paused"
+    },
+    "title-container": {
+      "no-playing-item": "No playing item."
+    },
+    "toast": {
+      "unable-to-connect": "Unable to connect to server."
     }
   },
   "settings-title-bar": {

@@ -1,4 +1,8 @@
 export class TimestampUtil {
+  /**
+   * Format a position as "minutes:seconds"
+   * @param timestamp
+   */
   public static formatDisplay(timestamp: number): string {
     const timestampInt = parseInt(timestamp.toString(), 10);
     const minutes = parseInt((timestampInt / 60).toString(), 10);
@@ -8,6 +12,10 @@ export class TimestampUtil {
     return `${minutesStr}:${secondsStr}`;
   }
 
+  /**
+   * Format a position as "[minutes:seconds.millis]"
+   * @param timestamp
+   */
   public static formatSquareBrackets(timestamp: number): string {
     const timestampInt = parseInt(timestamp.toString(), 10);
     const minutes = parseInt((timestampInt / 60).toString(), 10);
