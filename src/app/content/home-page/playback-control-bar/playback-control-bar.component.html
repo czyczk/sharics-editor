@@ -49,7 +49,13 @@
       </div>
     </div>
     <div class="playback-control-bar__middle-container__position-slider-container">
-      <input type="range" class="playback-control-bar__position-slider" />
+      <input #positionSlider type="range" step="0.001" min="0" max="1"
+             class="playback-control-bar__position-slider"
+             [disabled]="playbackState === 'idle'"
+             (mousedown)="isSeeking = true"
+             (mouseup)="seekInTrack(positionSlider.valueAsNumber)"
+             [value]="playbackPositionPercentage"
+              />
     </div>
   </div>
   <!-- Volume button -->

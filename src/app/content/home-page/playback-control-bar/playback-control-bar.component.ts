@@ -57,6 +57,7 @@ export class PlaybackControlBarComponent implements OnInit, OnDestroy {
 
   // The container to display the toast
   @ViewChild(ToastContainerDirective) toastContainer: ToastContainerDirective;
+  @ViewChild('positionSlider') positionSlider: HTMLInputElement;
 
   // Whether the control bar is connected with the server
   private _isConnected: boolean;
@@ -88,9 +89,22 @@ export class PlaybackControlBarComponent implements OnInit, OnDestroy {
   title: string;
 
   // For playback position
+  isSeeking = false;
   playbackPosition: PlaybackPosition;
   trackLength: PlaybackPosition;
   playbackPositionInterval: Timeout;
+  private _playbackPositionPercentage = 0;
+  get playbackPositionPercentage(): number {
+    if (this.isSeeking) {
+      return this.positionSlider.valueAsNumber;
+    }
+    if (!this.isSeeking && this.playbackPosition && this.trackLength) {
+      this._playbackPositionPercentage = this.playbackPosition.position / this.trackLength.position;
+    } else if (!this.playbackPosition || !this.trackLength) {
+      this._playbackPositionPercentage = 0;
+    }
+    return this._playbackPositionPercentage;
+  }
 
   /**
    * Try to connect to server.
@@ -224,6 +238,27 @@ export class PlaybackControlBarComponent implements OnInit, OnDestroy {
       }, 200);
     }, err => {
       this.handleError(err);
+    });
+  }
+
+  /**
+   * Request the server to seek to the specified position of the track.
+   * @param percentage The percentage of the track length
+   */
+  seekInTrack(percentage: number) {
+    // While seeking, stop updating playback position slider temporarily
+    this.isSeeking = true;
+
+    this.playbackService$.seek(percentage * this.trackLength.position).subscribe(() => {
+      // On success, update the playback position and resume updating the slider
+      this.playbackService$.getTimestamp().subscribe(it => {
+        this.isSeeking = false;
+        this.playbackPosition = new PlaybackPosition(it.msg);
+      });
+    }, err => {
+      this.handleError(err);
+      // Resume updating the slider
+      this.isSeeking = false;
     });
   }
 

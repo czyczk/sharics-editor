@@ -1,10 +1,10 @@
 # Sharics Editor
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.2.1.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.0.2.
 
 Project in development.
 
-V0.3.0 (2018-10-24)
+V0.4.2 (2018-11-20)
 
 ## Development server
 

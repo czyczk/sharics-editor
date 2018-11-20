@@ -89,6 +89,13 @@ input[type=range] {
 input[type=range]:focus {
   outline: none;
 }
+input[type=range]:disabled::-webkit-slider-thumb {
+  background: transparent;
+}
+input[type=range]:disabled::-moz-range-thumb {
+  background: transparent;
+}
+
 input[type=range]::-webkit-slider-runnable-track {
   background: map_get($shr-deep-gray-blue, color);
   height: 2px;

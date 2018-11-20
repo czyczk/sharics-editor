@@ -52,6 +52,22 @@ export class PlaybackService extends ApiService implements OnDestroy {
     return this.http.post<any>(super.prefixUrlWithBase('/playback/next'), null);
   }
 
+  /**
+   * Seek to a position in track in seconds.
+   * @param position Position in seconds.
+   */
+  seek(position: number): Observable<any> {
+    return this.http.post<any>(super.prefixUrlWithBase('/playback/seek'), { position: position });
+  }
+
+  /**
+   * Seek to a position in track forward by a positive value or backward by a negative value.
+   * @param delta Delta in seconds.
+   */
+  seekDelta(delta: number): Observable<any> {
+    return this.http.post<any>(super.prefixUrlWithBase('/playback/seek-delta'), { delta: delta });
+  }
+
   ngOnDestroy() {
     super.ngOnDestroy();
   }
