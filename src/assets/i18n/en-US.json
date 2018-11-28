@@ -11,6 +11,7 @@
   },
   "playback-control-bar": {
     "btn-cts.title": "Connect to server",
+    "btn-show-metadata.title": "Show metadata",
     "btn-previous-track.title": "Previous track",
     "btn-play-or-pause.title": "Play / pause (Long press to stop)",
     "btn-next-track.title": "Next track",

@@ -1,11 +1,23 @@
 <div class="playback-control-bar-toast-container" toastContainer></div>
 <div class="playback-control-bar-container">
-  <!-- Cover button -->
-  <div class="playback-control-bar__cover-container">
-    <app-adaptive-img *ngIf="isConnected" src="../../../../assets/bg-stub/bg03.jpg" width="5rem" height="5rem"></app-adaptive-img>
+  <!-- Multipurpose button -->
+  <div class="playback-control-bar__multipurpose-btn-container">
+    <!-- Connected: A button containing the cover of the current playing track or a placeholder. Click to show metadata. -->
+    <button *ngIf="isConnected"
+            id="btn-show-metadata"
+            class="playback-control-bar__multipurpose-btn"
+            (click)="showMetadata()"
+            [disabled]="playbackState === 'idle'"
+            [title]="componentName + '.btn-show-metadata.title' | translate">
+      <i class="anticon anticon-music-metadata"></i>
+      <span *ngIf="isCoverAvailable" class="playback-control-bar__cover-container">
+        <app-adaptive-img [src]="coverSrc" width="5rem" height="5rem"></app-adaptive-img>
+      </span>
+    </button>
+    <!-- Not connected: A button to connect to server. -->
     <button *ngIf="!isConnected"
             id="btn-cts"
-            class="playback-control-bar__disconnected-mask"
+            class="playback-control-bar__multipurpose-btn"
             (click)="connectToServer()"
             [disabled]="btnCtsState === 'operating' || btnCtsState === 'on-failure'"
             [title]="componentName + '.btn-cts.title' | translate">
@@ -19,6 +31,7 @@
             [title]="componentName + '.btn-previous-track.title' | translate">
       <i class="anticon anticon-step-backward"></i>
     </button>
+    <!-- Click to play/pause. Long press to stop. -->
     <button id="btn-play-or-pause" class="playback-control-bar__btn playback-control-bar__btn__round playback-control-bar__btn__large"
             longPress (longPress)="stop()" (earlyRelease)="playOrPause()"
             [title]="componentName + '.btn-play-or-pause.title' | translate">

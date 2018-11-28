@@ -1,4 +1,4 @@
-import {Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {AppSettingsService} from '../../../service/app-settings/app-settings.service';
 import {PlaybackService} from '../../../service/playback/playback.service';
 import {TranslateService} from '@ngx-translate/core';
@@ -10,6 +10,8 @@ import {ToastContainerDirective, ToastrService} from 'ngx-toastr';
 import {PlaybackPosition} from '../../../shared/playback-position';
 import {PlaybackControlStateService} from '../../../service/playback-control/playback-control-state.service';
 import {TrackService} from '../../../service/track/track.service';
+import {AdaptiveImgComponent} from '../../../core/adaptive-img/adaptive-img.component';
+import {Base64Util} from '../../../util/base64-util';
 
 @Component({
   selector: 'app-playback-control-bar',
@@ -57,6 +59,7 @@ export class PlaybackControlBarComponent implements OnInit, OnDestroy {
 
   // The container to display the toast
   @ViewChild(ToastContainerDirective) toastContainer: ToastContainerDirective;
+  @ViewChild('coverImg') coverImg: ElementRef<AdaptiveImgComponent>;
   @ViewChild('positionSlider') positionSlider: HTMLInputElement;
 
   // Whether the control bar is connected with the server
@@ -84,6 +87,10 @@ export class PlaybackControlBarComponent implements OnInit, OnDestroy {
       this.playbackControlStateService.playbackState.next(val);
     }
   }
+
+  // Cover state
+  isCoverAvailable = false;
+  coverSrc = '';
 
   // Title
   title: string;
@@ -147,6 +154,15 @@ export class PlaybackControlBarComponent implements OnInit, OnDestroy {
       }
     }, err => {
       this.handleError(err);
+    });
+  }
+
+  updateCover() {
+    this.trackService$.getCover().subscribe(it => {
+      Base64Util.encode(it, encoded => {
+        this.coverSrc = encoded.toString();
+        this.isCoverAvailable = true;
+      });
     });
   }
 
@@ -262,6 +278,11 @@ export class PlaybackControlBarComponent implements OnInit, OnDestroy {
     });
   }
 
+  // TODO
+  showMetadata() {
+
+  }
+
   // Actions to take when the playback state changes.
   private onPlaybackStateChanged(val: 'idle' | 'playing' | 'paused') {
     // Clear the previous playback position interval
@@ -276,6 +297,7 @@ export class PlaybackControlBarComponent implements OnInit, OnDestroy {
       setTimeout(() => {
         this.updateTitle();
         this.updateTrackLength();
+        this.updateCover();
       }, 300);
       if (val === 'playing') {
         // If it's playing, update playback position every 200ms.
@@ -287,8 +309,9 @@ export class PlaybackControlBarComponent implements OnInit, OnDestroy {
         this.updatePlaybackPosition();
       }
     }
-    // If the playback stops, clear the title to make sure there's no potential risk to catch sight of the previous title
+    // If the playback stops, clear the title and cover to make sure there's no potential risk to catch sight of the previous ones
     else {
+      this.isCoverAvailable = false;
       this.title = null;
     }
   }

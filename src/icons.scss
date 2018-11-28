@@ -70,6 +70,10 @@ $anticon-woff-font-path: "/assets/fonts/iconfont/iconfont.woff";
   font-family: 'Segoe MDL2 Assets';
   content: "\e765";
 }
+.anticon-music-metadata::before {
+  font-family: 'Segoe MDL2 Assets';
+  content: "\e90b";
+}
 .anticon-stop::before {
   font-family: 'Segoe MDL2 Assets';
   font-size: 0.7em;

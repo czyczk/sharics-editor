@@ -20,10 +20,11 @@ $playback-control-bar-height: 5rem;
   color: map_get($shr-deep-gray-blue, color);
 }
 
-.playback-control-bar__cover-container {
+.playback-control-bar__multipurpose-btn-container {
 }
 
-.playback-control-bar__disconnected-mask {
+.playback-control-bar__multipurpose-btn {
+  position: relative;
   width: $playback-control-bar-height;
   height: $playback-control-bar-height;
   display: flex;
@@ -36,19 +37,39 @@ $playback-control-bar-height: 5rem;
   i {
     font-size: 200%;
   }
+
+  // Make the cover overlay
+  .playback-control-bar__cover-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 1;
+    transition: 0.2s ease-in;
+  }
 }
-.playback-control-bar__disconnected-mask:hover {
+.playback-control-bar__multipurpose-btn:hover {
   background-color: map_get($shr-deep-gray-blue, background-color-hover);
   color: map_get($shr-deep-gray-blue, color-hover);
+
+  .playback-control-bar__cover-container {
+    transition: 0.2s ease-out;
+    opacity: 0.5;
+  }
 }
-.playback-control-bar__disconnected-mask:active {
+.playback-control-bar__multipurpose-btn:active {
   background-color: map_get($shr-deep-gray-blue, background-color-active);
   color: map_get($shr-deep-grayer-blue, color-active);
+
+  .playback-control-bar__cover-container {
+    transition: 0.05s;
+    opacity: 0.3;
+  }
 }
-.playback-control-bar__disconnected-mask:disabled {
+.playback-control-bar__multipurpose-btn:disabled {
   background-color: map_get($shr-deep-gray-blue, background-color-disabled);
   color: map_get($shr-deep-gray-blue, color-disabled);
 }
+
 
 .playback-control-bar__playback-btn-container {
   display: flex;

@@ -58,9 +58,9 @@ class EditorKeymap {
 
 export class EditorTheme {
   // Default settings
-  private static readonly defaultTimestampColor = '#FF8C00';
+  private static readonly defaultTimestampColor = '#e57e31';
   private static readonly defaultTimestampFont = 'monospace';
-  private static readonly defaultWordBreakerColor = '#FFC885';
+  private static readonly defaultWordBreakerColor = '#df782b';
 
   public timestampColor = EditorTheme.defaultTimestampColor;
   public timestampFont = EditorTheme.defaultTimestampFont;
