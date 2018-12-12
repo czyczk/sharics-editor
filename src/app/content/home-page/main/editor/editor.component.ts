@@ -60,7 +60,13 @@ export class EditorComponent implements OnInit, OnDestroy {
   // E.g.: For strings like "《字符》", if we stop before "《", after assigning the timestamp, we should skip "字" as well.
   private skipNextBreak = false;
 
+  // A temporal variable to prevent onInput() being executed. Sometimes work is done with no extra work needed.
+  // E.g.: On page load, highlighted text is inserted; On inserting a timestamp.
+  private preventNextInputDetection = true;
+
   @ViewChild('textEditor') textEditor: ElementRef<HTMLDivElement>;
+
+  @HostBinding('style.height') height = '100%';
 
   @HostListener('window:keydown', ['$event']) keymap(event: KeyboardEvent) {
     const keymap = this.appSettings.editorKeymap;
@@ -78,8 +84,6 @@ export class EditorComponent implements OnInit, OnDestroy {
     }
   }
 
-  @HostBinding('style.height') height = '100%';
-
   ngOnInit() {
     this.updateHighlight();
   }
@@ -91,10 +95,21 @@ export class EditorComponent implements OnInit, OnDestroy {
   }
 
   updateHighlight() {
-    if (this.highlighted) {
-      return;
-    }
+    // Get the highlighted text
     this.highlighted = EditorUtil.toHighlighted(this.text, this.appSettings.editorTheme);
+
+    // Replace contents in the editor.
+    // (We can't use [innerHTML] for the element because of security concerns, Angular eliminates all the formats.)
+    this.textEditor.nativeElement.focus(); // Webkit based browsers throw errors without this line
+    const sel = window.getSelection();
+    let range = sel.getRangeAt(0);
+    range.selectNodeContents(this.textEditor.nativeElement);
+    document.execCommand('insertHTML', false, this.highlighted);
+
+    // Page content changed. Reposition the caret to the start.
+    range = sel.getRangeAt(0);
+    range.setStart(this.textEditor.nativeElement, 0);
+    range.collapse(true);
   }
 
   testRange() {
@@ -289,10 +304,10 @@ export class EditorComponent implements OnInit, OnDestroy {
         }
       }
 
-      // Insert a new timestamp (override the old one if selected)
+      // Insert a new timestamp (override the old one if selected). Prevent input detection.
+      this.preventNextInputDetection = true;
       document.execCommand('insertHTML', false,
-        `<span style="color: ${this.appSettings.editorTheme.timestampColor}; font-family: ${this.appSettings.editorTheme.timestampFont}">` +
-        TimestampUtil.formatSquareBrackets(it.msg) + `</span>`);
+        EditorUtil.formatAsTimestamp(TimestampUtil.formatSquareBrackets(it.msg), this.appSettings.editorTheme));
       // TODO debug info
       console.log(window.getSelection().getRangeAt(0));
 
@@ -306,11 +321,150 @@ export class EditorComponent implements OnInit, OnDestroy {
     const sel = window.getSelection();
     const range = sel.getRangeAt(0);
 
+    // Find the timestamp nearby and remove it. Prevent input detection.
     const timestampNode = this.findNearestTimestamp(range);
     if (timestampNode) {
+      this.preventNextInputDetection = true;
       range.selectNode(timestampNode);
       document.execCommand('delete');
     }
+  }
+
+  onInput(event: UIEvent) {
+    if (this.preventNextInputDetection) {
+      this.preventNextInputDetection = false;
+      console.log('Input detection prevented.');
+      return;
+    }
+    console.log('onInput triggered.');
+
+    // Get the current caret position
+    const sel = window.getSelection();
+    let range = sel.getRangeAt(0);
+    let startOffset = range.startOffset;
+    console.log('startOffset: ' + startOffset);
+
+    // If we are talking about SPAN, make sure we take the right ELEMENT_NODE
+    let currentNode = range.startContainer;
+    if (currentNode.nodeType === Node.TEXT_NODE && currentNode.parentNode.nodeName === 'SPAN') {
+      currentNode = currentNode.parentNode;
+    }
+
+    let isCaseFound = false;
+    let isCase1 = false;
+    let isCase2 = false;
+    let isCase3 = false;
+    let indexOfRightBracket: number; // A variable used in case 3
+
+    // Case 1: A removal operation removes the ending "]" of a timestamp. Degrade the node to a normal text node.
+    // Condition: We are in a timestamp formatted node (SPAN) and the last character is not a "]".
+    // Case 2: A removal operation removes the starting "[" of a timestamp. Degrade the node to a normal text node.
+    // Condition: We are in a timestamp formatted node (SPAN) and the first character is not a "[".
+    // Case 3: A "[" is inserted to form a timestamp. Upgrade the range to a timestamp node.
+    // Condition: Inserted in a text node and can match the "]" in the same node. The caret can't be at the beginning nor the end.
+    // * Note: In Webkit, backspaces may lead us into a word breaker node.
+    if (currentNode.nodeName === 'SPAN') {
+      const textContent = currentNode.textContent;
+      if (!textContent.startsWith('`')) {
+        if (textContent[textContent.length - 1] !== ']') {
+          isCase1 = true;
+        } else if (textContent[0] !== '[') {
+          isCase2 = true;
+          // Record the length of the previous text node since they'll be merged and we need the length to restore the caret position
+          if (currentNode.previousSibling && currentNode.previousSibling.nodeName === '#text') {
+            startOffset = currentNode.previousSibling.textContent.length;
+          }
+        }
+      }
+    }
+    // There's possibility that the caret is at the start of the text node after the SPAN.
+    // (This is the case when we select multiple chars and remove them in Firefox.)
+    // Look backward to see if case 1 is applicable.
+    else if (startOffset === 0 && currentNode.previousSibling && currentNode.previousSibling.nodeName === 'SPAN') {
+      const textContent = currentNode.previousSibling.textContent;
+      if (!textContent.startsWith('`')) {
+        if (textContent[textContent.length - 1] !== ']') {
+          isCase1 = true;
+        }
+      }
+      startOffset = textContent.length;
+      currentNode = currentNode.previousSibling;
+    }
+    // There's possibility that the caret is at the end of the text node before the SPAN.
+    // Look forward to see if case 2 is applicable.
+    else if (startOffset === currentNode.textContent.length && currentNode.nextSibling && currentNode.nextSibling.nodeName === 'SPAN') {
+      const textContent = currentNode.nextSibling.textContent;
+      if (!textContent.startsWith('`')) {
+        if (textContent[0] !== '[') {
+          isCase2 = true;
+        }
+      }
+      currentNode = currentNode.nextSibling;
+      // The node will later be combined with the previous text node, so do not change start offset that was just recorded
+    }
+    // The caret position is in the middle of a text node, see if case 3 is applicable
+    else {
+      const textContent = currentNode.textContent;
+      // After inserting "[", the caret will be right after the char
+      if (startOffset && textContent[startOffset - 1] === '[') {
+        // See if a matching "]" can be found in the same node
+        indexOfRightBracket = textContent.indexOf(']');
+        if (indexOfRightBracket !== -1) {
+          isCase3 = true;
+        }
+      }
+    }
+
+    isCaseFound = isCase1 || isCase2 || isCase3;
+
+    if (isCaseFound) {
+      if (isCase1) {
+        console.log('Input detection: Case 1 applied.');
+        // Degrade it by selecting the node and remove the format
+        range.selectNodeContents(currentNode);
+        document.execCommand('removeFormat');
+
+        range = sel.getRangeAt(0);
+        currentNode = range.startContainer;
+        const indexOfLastLeftBracket = currentNode.textContent.lastIndexOf('[');
+        range.setStart(currentNode, indexOfLastLeftBracket + startOffset);
+        range.collapse(true);
+      } else if (isCase2) {
+        console.log('Input detection: Case 2 applied.');
+        // Degrade it by selecting the node and remove the format
+        range.selectNode(currentNode);
+        document.execCommand('removeFormat');
+
+        // Merge the text nodes to make Webkit behave as in Firefox, or we cannot set caret across text nodes
+        this.textEditor.nativeElement.normalize();
+        // Restore the caret position
+        range = sel.getRangeAt(0);
+        currentNode = range.startContainer;
+        range.setStart(currentNode, startOffset);
+        range.collapse(true);
+      } else if (isCase3) {
+        console.log('Input detection: Case 3 applied.');
+
+        // Select the text to encapsulate into a timestamp node.
+        // The caret stops right after "[" and the "]" needs to be included,
+        // so the range is [startOffset - 1, indexOfRightBracket + 1]
+        range.setStart(currentNode, startOffset - 1);
+        range.setEnd(currentNode, indexOfRightBracket + 1);
+        const timestampText = range.startContainer.textContent.substring(startOffset - 1, indexOfRightBracket + 1);
+
+        // Style it
+        document.execCommand('insertHTML', null, EditorUtil.formatAsTimestamp(timestampText, this.appSettings.editorTheme));
+        // Restore caret position
+        range = sel.getRangeAt(0);
+        currentNode = range.startContainer;
+        range.setStart(currentNode, 1);
+        range.collapse(true);
+      }
+    }
+
+    // Tried to move the caret out of timestamp nodes if none of the cases apply, which might make the process easier,
+    // but it didn't work since Webkit doesn't differentiate the ending of a SPAN from the beginning of a text node.
+    // The workaround is to consider all possible positions of the caret as the code above 😂
   }
 
   // Find the nearest word breaker node

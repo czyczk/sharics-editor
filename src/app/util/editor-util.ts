@@ -18,15 +18,27 @@ export class EditorUtil {
   public static toHighlighted(text: string, editorTheme: EditorTheme): string {
     let escaped = EditorUtil.escapeHtml(text);
     // Highlight timestamps
+    // escaped = escaped.replace(
+    //   EditorUtil.ruleSquareBracket,
+    //   `<font color="${editorTheme.timestampColor}" face="${editorTheme.timestampFont}">$&</font>`
+    // );
     escaped = escaped.replace(
       EditorUtil.ruleSquareBracket,
-      `<font color="${editorTheme.timestampColor}" face="${editorTheme.timestampFont}">$&</font>`
+      `<span style="color: ${editorTheme.timestampColor}; font-family: ${editorTheme.timestampFont};">$&</span>`
     );
     // Highlight word breakers
+    // escaped = escaped.replace(
+    //   EditorUtil.ruleManualWordBreaker,
+    //   `<font color="${editorTheme.wordBreakerColor}">$&</font>`
+    // );
     escaped = escaped.replace(
       EditorUtil.ruleManualWordBreaker,
-      `<font color="${editorTheme.wordBreakerColor}">$&</font>`
+      `<span style="color: ${editorTheme.wordBreakerColor};">$&</span>`
     );
     return escaped;
+  }
+
+  public static formatAsTimestamp(timestampText: string, editorTheme: EditorTheme): string {
+    return `<span style="color: ${editorTheme.timestampColor}; font-family: ${editorTheme.timestampFont};">${timestampText}</span>`;
   }
 }

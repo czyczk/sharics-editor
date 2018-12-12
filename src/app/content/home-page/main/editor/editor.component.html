@@ -22,7 +22,7 @@
   <div class="main-panel__text-display-container">
     <div #textEditor
          class="main-panel__text-scroller"
-         [innerHTML]="highlighted"
+         (input)="onInput($event)"
          contenteditable="true"></div>
   </div>
 </div>
