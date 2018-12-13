@@ -8,6 +8,8 @@ import {PlaybackService} from '../../../../service/playback/playback.service';
 import {Subscription} from 'rxjs';
 import {KeymapUtil} from '../../../../util/keymap-util';
 import {TimestampUtil} from '../../../../util/timestamp-util';
+import {BrowserDetection, browserDetection} from '@angular/platform-browser/testing/src/browser_util';
+import {BrowserDetector} from '../../../../util/browser-detector';
 
 @Component({
   selector: 'app-editor',
@@ -336,13 +338,11 @@ export class EditorComponent implements OnInit, OnDestroy {
       console.log('Input detection prevented.');
       return;
     }
-    console.log('onInput triggered.');
 
     // Get the current caret position
     const sel = window.getSelection();
     let range = sel.getRangeAt(0);
     let startOffset = range.startOffset;
-    console.log('startOffset: ' + startOffset);
 
     // If we are talking about SPAN, make sure we take the right ELEMENT_NODE
     let currentNode = range.startContainer;
@@ -350,72 +350,157 @@ export class EditorComponent implements OnInit, OnDestroy {
       currentNode = currentNode.parentNode;
     }
 
-    let isCaseFound = false;
+    let isCaseFound: boolean;
     let isCase1 = false;
     let isCase2 = false;
     let isCase3 = false;
-    let indexOfRightBracket: number; // A variable used in case 3
+    let isCase4 = false;
+    let isCase5 = false;
+    let indexOfRightBracket = -1; // A variable used in case 1, 3 and 5
+    let indexOfLeftBracket = -1; // A variable used in case 1, 4 and 5
 
     // Case 1: A removal operation removes the ending "]" of a timestamp. Degrade the node to a normal text node.
-    // Condition: We are in a timestamp formatted node (SPAN) and the last character is not a "]".
+    // Condition: We are in a timestamp formatted node (SPAN) and no "]" after the "[" is found.
     // Case 2: A removal operation removes the starting "[" of a timestamp. Degrade the node to a normal text node.
-    // Condition: We are in a timestamp formatted node (SPAN) and the first character is not a "[".
+    // Condition: We are in a timestamp formatted node (SPAN) and no "[" before the "]" is found.
     // Case 3: A "[" is inserted to form a timestamp. Upgrade the range to a timestamp node.
     // Condition: Inserted in a text node and can match the "]" in the same node. The caret can't be at the beginning nor the end.
-    // * Note: In Webkit, backspaces may lead us into a word breaker node.
+    // Case 4: A "]" is inserted to form a timestamp. Upgrade the range to a timestamp node.
+    // Condition: Inserted in a text node and can match the "[" in the same node. The caret can't be at the beginning.
+    // Case 5: A character is inserted at the end of a timestamp or a word breaker. Move the character outside the SPAN node.
+    // Condition: If case 1 and 2 are ruled out, we only need to make sure we are at the end and the last character is neither "]" nor "`".
+    // Case 6: A character is inserted at the beginning of a timestamp or a word breaker. Move the character outside the SPAN node.
+    // Condition: If case 1 and 2 are ruled out, we only need to make sure we are at the beginning and the first character is neither "[" nor "`".
+    // * Note:
+    // Webkit-based browsers doesn't differentiate the ending of SPAN from the beginning of the next text node, so
+    // For case 1: Backspaces may lead us into a word breaker node.
+    // For case 5: It's a possible case since characters can always be inserted after the end of a timestamp.
     if (currentNode.nodeName === 'SPAN') {
+      // Before making decision, check if either of the sibling nodes is SPAN so that we can merge nodes.
+      // If we delete a range containing the right half of the previous timestamp and the left half of the next timestamp,
+      // it still remains a timestamp node.
+      // TODO: Remember to check if they have the same style
+      // Webkit-based browsers remain the caret in the former node.
+      if (BrowserDetector.isBlink() && currentNode.nextSibling && currentNode.nextSibling.nodeName === 'SPAN') {
+        // Merge the nodes
+        const nextNode = currentNode.nextSibling;
+        const textInNextNode = nextNode.textContent;
+        currentNode.textContent += textInNextNode;
+        range.selectNode(nextNode);
+        document.execCommand('delete');
+        // Restore caret position
+        range = sel.getRangeAt(0);
+        range.setStart(range.startContainer, startOffset);
+        range.collapse(true);
+        // Update the current node and then make the decision
+        currentNode = range.startContainer.parentNode;
+      }
+      // Firefox remains the caret in the latter node.
+      else if (BrowserDetector.isFirefox() && currentNode.previousSibling && currentNode.previousSibling.nodeName === 'SPAN') {
+        // Merge the nodes
+        const previousNode = currentNode.previousSibling;
+        const textInPreviousNode = previousNode.textContent;
+        currentNode.textContent = textInPreviousNode + currentNode.textContent;
+        previousNode.parentNode.removeChild(previousNode);
+        // Restore caret position
+        range = sel.getRangeAt(0); // Range's start container is the SPAN
+        console.log(range);
+        range.setStart(range.startContainer.firstChild, textInPreviousNode.length);
+        range.collapse(true);
+        // Update the current node and then make the decision
+        currentNode = range.startContainer;
+      }
+
       const textContent = currentNode.textContent;
-      if (!textContent.startsWith('`')) {
-        if (textContent[textContent.length - 1] !== ']') {
-          isCase1 = true;
-        } else if (textContent[0] !== '[') {
-          isCase2 = true;
-          // Record the length of the previous text node since they'll be merged and we need the length to restore the caret position
-          if (currentNode.previousSibling && currentNode.previousSibling.nodeName === '#text') {
-            startOffset = currentNode.previousSibling.textContent.length;
+      for (let i = 0; i < textContent.length; i++) {
+        const ch = textContent[i];
+        // Only the first "[]" pair counts
+        if (ch === '[' && indexOfLeftBracket === -1) {
+          indexOfLeftBracket = i;
+        } else if (ch === ']' && indexOfRightBracket === -1) {
+          indexOfRightBracket = i;
+        }
+        if (indexOfLeftBracket !== -1 && indexOfRightBracket !== -1) {
+          break;
+        }
+      }
+      // See if case 1 or 2 is applicable.
+      if (indexOfLeftBracket !== -1 && indexOfRightBracket === -1) {
+        // TODO: Before making decisions, try to find a "]" in the next text node
+        isCase1 = true;
+      } else if (indexOfLeftBracket === -1 && indexOfRightBracket !== -1) {
+        console.log(range);
+        // TODO: Before making decisions, try to find a "[" in the previous text node
+        isCase2 = true;
+        // Record the length of the previous text node since they'll be merged and we need the length to restore the caret position
+        if (currentNode.previousSibling && currentNode.previousSibling.nodeName === '#text') {
+          startOffset = currentNode.previousSibling.textContent.length;
+        }
+      }
+      // We are in a SPAN node where a "[]" pair is found or it starts with "`".
+      // See if case 5 is applicable.
+      else {
+        const lastChar = textContent[textContent.length - 1];
+        if (startOffset === textContent.length && lastChar !== ']' && lastChar !== '`') {
+          isCase5 = true;
+        }
+      }
+    }
+    // Caret at the beginning of the current node
+    else if (startOffset === 0) {
+      // There's possibility that the caret is at the start of the text node after the SPAN.
+      // (This is the case when we select multiple chars and remove them in Firefox.)
+      // Look backward to see if case 1 is applicable.
+      if (currentNode.previousSibling && currentNode.previousSibling.nodeName === 'SPAN') {
+        const textContent = currentNode.previousSibling.textContent;
+        if (!textContent.startsWith('`')) {
+          if (textContent[textContent.length - 1] !== ']') {
+            isCase1 = true;
+          }
+        }
+        startOffset = textContent.length;
+        currentNode = currentNode.previousSibling;
+      }
+    }
+    // Caret not at the beginning
+    else {
+      // See if case 4 is applicable
+      let textContent = currentNode.textContent;
+      // After inserting "]", the caret will be right after the char
+      if (textContent[startOffset - 1] === ']') {
+        // See if a matching "[" can be found before the caret in the same node (the last one counts if there are multiple ones)
+        indexOfLeftBracket = textContent.substring(0, startOffset - 1).lastIndexOf('[');
+        if (indexOfLeftBracket !== -1) {
+          isCase4 = true;
+        }
+      }
+      // There's possibility that the caret is at the end of the text node before the SPAN.
+      // Look forward to see if case 2 is applicable.
+      else if (startOffset === currentNode.textContent.length && currentNode.nextSibling && currentNode.nextSibling.nodeName === 'SPAN') {
+        textContent = currentNode.nextSibling.textContent;
+        if (!textContent.startsWith('`')) {
+          if (textContent[0] !== '[') {
+            isCase2 = true;
+          }
+        }
+        currentNode = currentNode.nextSibling;
+        // The node will later be combined with the previous text node, so do not change start offset that was just recorded
+      }
+      // The caret position is in the middle of a text node, see if case 3 is applicable
+      else {
+        // After inserting "[", the caret will be right after the char
+        if (startOffset && textContent[startOffset - 1] === '[') {
+          // See if a matching "]" can be found after the caret in the same node
+          indexOfRightBracket = textContent.substr(startOffset).indexOf(']');
+          if (indexOfRightBracket !== -1) {
+            indexOfRightBracket += startOffset;
+            isCase3 = true;
           }
         }
       }
     }
-    // There's possibility that the caret is at the start of the text node after the SPAN.
-    // (This is the case when we select multiple chars and remove them in Firefox.)
-    // Look backward to see if case 1 is applicable.
-    else if (startOffset === 0 && currentNode.previousSibling && currentNode.previousSibling.nodeName === 'SPAN') {
-      const textContent = currentNode.previousSibling.textContent;
-      if (!textContent.startsWith('`')) {
-        if (textContent[textContent.length - 1] !== ']') {
-          isCase1 = true;
-        }
-      }
-      startOffset = textContent.length;
-      currentNode = currentNode.previousSibling;
-    }
-    // There's possibility that the caret is at the end of the text node before the SPAN.
-    // Look forward to see if case 2 is applicable.
-    else if (startOffset === currentNode.textContent.length && currentNode.nextSibling && currentNode.nextSibling.nodeName === 'SPAN') {
-      const textContent = currentNode.nextSibling.textContent;
-      if (!textContent.startsWith('`')) {
-        if (textContent[0] !== '[') {
-          isCase2 = true;
-        }
-      }
-      currentNode = currentNode.nextSibling;
-      // The node will later be combined with the previous text node, so do not change start offset that was just recorded
-    }
-    // The caret position is in the middle of a text node, see if case 3 is applicable
-    else {
-      const textContent = currentNode.textContent;
-      // After inserting "[", the caret will be right after the char
-      if (startOffset && textContent[startOffset - 1] === '[') {
-        // See if a matching "]" can be found in the same node
-        indexOfRightBracket = textContent.indexOf(']');
-        if (indexOfRightBracket !== -1) {
-          isCase3 = true;
-        }
-      }
-    }
 
-    isCaseFound = isCase1 || isCase2 || isCase3;
+    isCaseFound = isCase1 || isCase2 || isCase3 || isCase4 || isCase5;
 
     if (isCaseFound) {
       if (isCase1) {
@@ -424,6 +509,8 @@ export class EditorComponent implements OnInit, OnDestroy {
         range.selectNodeContents(currentNode);
         document.execCommand('removeFormat');
 
+        // Merge the text nodes to make Webkit behave as in Firefox, or we cannot set caret across text nodes
+        this.textEditor.nativeElement.normalize();
         range = sel.getRangeAt(0);
         currentNode = range.startContainer;
         const indexOfLastLeftBracket = currentNode.textContent.lastIndexOf('[');
@@ -447,7 +534,7 @@ export class EditorComponent implements OnInit, OnDestroy {
 
         // Select the text to encapsulate into a timestamp node.
         // The caret stops right after "[" and the "]" needs to be included,
-        // so the range is [startOffset - 1, indexOfRightBracket + 1]
+        // so the range is [startOffset - 1, indexOfRightBracket]
         range.setStart(currentNode, startOffset - 1);
         range.setEnd(currentNode, indexOfRightBracket + 1);
         const timestampText = range.startContainer.textContent.substring(startOffset - 1, indexOfRightBracket + 1);
@@ -457,6 +544,38 @@ export class EditorComponent implements OnInit, OnDestroy {
         // Restore caret position
         range = sel.getRangeAt(0);
         currentNode = range.startContainer;
+        range.setStart(currentNode, 1);
+        range.collapse(true);
+      } else if (isCase4) {
+        console.log('Input detection: Case 4 applied.');
+
+        // Select the text to encapsulate into a timestamp node.
+        // The caret stops right after "]",
+        // so the range is [indexOfLeftBracket, startOffset - 1]
+        range.setStart(currentNode, indexOfLeftBracket);
+        range.setEnd(currentNode, startOffset);
+        const timestampText = currentNode.textContent.substring(indexOfLeftBracket, startOffset);
+
+        // Style it
+        document.execCommand('insertHTML', null, EditorUtil.formatAsTimestamp(timestampText, this.appSettings.editorTheme));
+        // Restore caret position
+        range = sel.getRangeAt(0);
+        currentNode = range.startContainer;
+        range.setStart(currentNode, startOffset - indexOfLeftBracket);
+        range.collapse(true);
+      } else if (isCase5) {
+        console.log('Input detection: Case 5 applied.');
+        // Move the last character outside by
+        // Selecting the inserted char
+        range.setStart(range.startContainer, startOffset - 1);
+        range.setEnd(range.startContainer, startOffset);
+        // Remove style
+        document.execCommand('removeFormat');
+        // Merge the text with the next text node (needed in Webkit)
+        this.textEditor.nativeElement.normalize();
+        // Restore caret position
+        range = sel.getRangeAt(0);
+        currentNode = range.endContainer;
         range.setStart(currentNode, 1);
         range.collapse(true);
       }
