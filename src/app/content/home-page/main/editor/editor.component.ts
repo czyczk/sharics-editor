@@ -10,6 +10,13 @@ import {KeymapUtil} from '../../../../util/keymap-util';
 import {TimestampUtil} from '../../../../util/timestamp-util';
 import {BrowserDetection, browserDetection} from '@angular/platform-browser/testing/src/browser_util';
 import {BrowserDetector} from '../../../../util/browser-detector';
+import {KeyShortcutSet} from '../../../../shared/key-shortcut-set';
+import {KeyShortcut} from '../../../../shared/key-shortcut';
+
+class SpanMergeResult {
+  isMergePerformed = false;
+  updatedCurrentNode?: Node;
+}
 
 @Component({
   selector: 'app-editor',
@@ -33,7 +40,7 @@ export class EditorComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
   private appSettings: AppSettings;
 
-  text = '[ti:Lemon]\n' +
+  sampleText = '[ti:Lemon]\n' +
     '[ar:米津玄師]\n' +
     '[al:Lemon]\n' +
     '[ed:2]\n' +
@@ -84,6 +91,34 @@ export class EditorComponent implements OnInit, OnDestroy {
       event.preventDefault();
       this.removeTimestamp();
     }
+    // Handle inserting line breaks manually
+    else if (new KeyShortcutSet(new KeyShortcut('Enter'), new KeyShortcut('Enter', false, false, true))
+      .toStringArr().includes(targetShortcutStr)) {
+      event.preventDefault();
+      this.insertLineBreak();
+    }
+    // TODO: Check if the removal produce a timestamp.
+    else if (new KeyShortcutSet(new KeyShortcut('Backspace')).toStringArr().includes(targetShortcutStr)) {
+      console.log('backspace');
+    }
+  }
+
+  @HostListener('paste', ['$event']) paste(event: ClipboardEvent) {
+    event.preventDefault();
+    const text = event.clipboardData.getData('text/plain').replace('\r\n', '\n');
+    // TODO: There's space for optimization. For now a progress indicator is planned.
+    for (const ch of text) {
+      // The chars can be inserted in a new created text node. Merge them to make the structure usable before onInput() is triggered.
+      // But remember not to normalize <br>.
+      if (ch === '\n') {
+        this.insertLineBreak();
+      } else {
+        this.preventNextInputDetection = true;
+        document.execCommand('insertHTML', null, EditorUtil.escapeHtml(ch));
+        this.textEditor.nativeElement.normalize();
+        this.onInput();
+      }
+    }
   }
 
   ngOnInit() {
@@ -96,9 +131,12 @@ export class EditorComponent implements OnInit, OnDestroy {
     });
   }
 
-  updateHighlight() {
+  updateHighlight(plainText?: string) {
+    if (plainText == null) {
+      plainText = this.sampleText;
+    }
     // Get the highlighted text
-    this.highlighted = EditorUtil.toHighlighted(this.text, this.appSettings.editorTheme);
+    this.highlighted = EditorUtil.toHighlighted(plainText, this.appSettings.editorTheme);
 
     // Replace contents in the editor.
     // (We can't use [innerHTML] for the element because of security concerns, Angular eliminates all the formats.)
@@ -142,6 +180,17 @@ export class EditorComponent implements OnInit, OnDestroy {
       return textContent && textContent === '`';
     }
     return false;
+  }
+
+  // Check if the two element nodes have the same purpose by checking the style
+  private haveSamePurpose(el1: HTMLElement, el2: HTMLElement): boolean {
+    const style1 = el1.style;
+    const style2 = el2.style;
+    return style1.font === style2.font &&
+      style1.fontFamily === style2.fontFamily &&
+      style1.fontSize === style2.fontSize &&
+      style1.fontStyle === style2.fontStyle &&
+      style1.color === style2.color;
   }
 
   // This is called right after a timestamp insertion or replacement is finished.
@@ -310,8 +359,6 @@ export class EditorComponent implements OnInit, OnDestroy {
       this.preventNextInputDetection = true;
       document.execCommand('insertHTML', false,
         EditorUtil.formatAsTimestamp(TimestampUtil.formatSquareBrackets(it.msg), this.appSettings.editorTheme));
-      // TODO debug info
-      console.log(window.getSelection().getRangeAt(0));
 
       // Stop at the next breakpoint
       this.skipCharsTillBreakpoint(window.getSelection().getRangeAt(0), false);
@@ -332,7 +379,7 @@ export class EditorComponent implements OnInit, OnDestroy {
     }
   }
 
-  onInput(event: UIEvent) {
+  onInput() {
     if (this.preventNextInputDetection) {
       this.preventNextInputDetection = false;
       console.log('Input detection prevented.');
@@ -356,6 +403,7 @@ export class EditorComponent implements OnInit, OnDestroy {
     let isCase3 = false;
     let isCase4 = false;
     let isCase5 = false;
+    let isCase6 = false;
     let indexOfRightBracket = -1; // A variable used in case 1, 3 and 5
     let indexOfLeftBracket = -1; // A variable used in case 1, 4 and 5
 
@@ -367,50 +415,15 @@ export class EditorComponent implements OnInit, OnDestroy {
     // Condition: Inserted in a text node and can match the "]" in the same node. The caret can't be at the beginning nor the end.
     // Case 4: A "]" is inserted to form a timestamp. Upgrade the range to a timestamp node.
     // Condition: Inserted in a text node and can match the "[" in the same node. The caret can't be at the beginning.
-    // Case 5: A character is inserted at the end of a timestamp or a word breaker. Move the character outside the SPAN node.
+    // Case 5: Characters are inserted at the end of a timestamp or a word breaker. Move the character outside the SPAN node.
     // Condition: If case 1 and 2 are ruled out, we only need to make sure we are at the end and the last character is neither "]" nor "`".
-    // Case 6: A character is inserted at the beginning of a timestamp or a word breaker. Move the character outside the SPAN node.
+    // Case 6: Characters are inserted at the beginning of a timestamp or a word breaker. Move the character outside the SPAN node.
     // Condition: If case 1 and 2 are ruled out, we only need to make sure we are at the beginning and the first character is neither "[" nor "`".
     // * Note:
     // Webkit-based browsers doesn't differentiate the ending of SPAN from the beginning of the next text node, so
     // For case 1: Backspaces may lead us into a word breaker node.
     // For case 5: It's a possible case since characters can always be inserted after the end of a timestamp.
     if (currentNode.nodeName === 'SPAN') {
-      // Before making decision, check if either of the sibling nodes is SPAN so that we can merge nodes.
-      // If we delete a range containing the right half of the previous timestamp and the left half of the next timestamp,
-      // it still remains a timestamp node.
-      // TODO: Remember to check if they have the same style
-      // Webkit-based browsers remain the caret in the former node.
-      if (BrowserDetector.isBlink() && currentNode.nextSibling && currentNode.nextSibling.nodeName === 'SPAN') {
-        // Merge the nodes
-        const nextNode = currentNode.nextSibling;
-        const textInNextNode = nextNode.textContent;
-        currentNode.textContent += textInNextNode;
-        range.selectNode(nextNode);
-        document.execCommand('delete');
-        // Restore caret position
-        range = sel.getRangeAt(0);
-        range.setStart(range.startContainer, startOffset);
-        range.collapse(true);
-        // Update the current node and then make the decision
-        currentNode = range.startContainer.parentNode;
-      }
-      // Firefox remains the caret in the latter node.
-      else if (BrowserDetector.isFirefox() && currentNode.previousSibling && currentNode.previousSibling.nodeName === 'SPAN') {
-        // Merge the nodes
-        const previousNode = currentNode.previousSibling;
-        const textInPreviousNode = previousNode.textContent;
-        currentNode.textContent = textInPreviousNode + currentNode.textContent;
-        previousNode.parentNode.removeChild(previousNode);
-        // Restore caret position
-        range = sel.getRangeAt(0); // Range's start container is the SPAN
-        console.log(range);
-        range.setStart(range.startContainer.firstChild, textInPreviousNode.length);
-        range.collapse(true);
-        // Update the current node and then make the decision
-        currentNode = range.startContainer;
-      }
-
       const textContent = currentNode.textContent;
       for (let i = 0; i < textContent.length; i++) {
         const ch = textContent[i];
@@ -426,10 +439,57 @@ export class EditorComponent implements OnInit, OnDestroy {
       }
       // See if case 1 or 2 is applicable.
       if (indexOfLeftBracket !== -1 && indexOfRightBracket === -1) {
-        // TODO: Before making decisions, try to find a "]" in the next text node
-        isCase1 = true;
+        // Before making decision, check if the next sibling node is SPAN so that we can merge nodes.
+        // If we delete a range containing the right half of the previous timestamp and the left half of the next timestamp,
+        // they should remain as one.
+        // `currentNode` remains intact if no merge occurs
+        const mergeResult = this.mergeWithNextSpan(currentNode, startOffset);
+
+        if (mergeResult.isMergePerformed) {
+          currentNode = mergeResult.updatedCurrentNode;
+        } else if (currentNode.nextSibling && currentNode.nextSibling.nodeName === '#text') {
+          // Before making decisions, try to find a "]" in the next text node
+          const nextSibling = currentNode.nextSibling;
+          // Stop on seeing a "["
+          const textContentTextNode = nextSibling.textContent;
+          let indexOfRightBracketTextNode = -1;
+          for (let i = 0; i < textContentTextNode.length; i++) {
+            const ch = textContentTextNode[i];
+            if (ch === '[') {
+              break;
+            } else if (ch === ']') {
+              indexOfRightBracketTextNode = i;
+              break;
+            }
+          }
+          if (indexOfRightBracketTextNode !== -1) {
+            console.log('Input detection: A case 1 decision is avoided by reusing "]" in the current node.');
+            // Move the characters before (including) the "]" to the current node
+            currentNode.textContent += textContentTextNode.substring(0, indexOfRightBracketTextNode + 1);
+            range.setStart(nextSibling, 0);
+            range.setEnd(nextSibling, indexOfRightBracketTextNode + 1);
+            document.execCommand('delete');
+            // Reposition the caret
+            range = sel.getRangeAt(0);
+            range.setStart(currentNode.firstChild, startOffset);
+            range.collapse(true);
+          } else {
+            isCase1 = true;
+          }
+        } else {
+          isCase1 = true;
+        }
       } else if (indexOfLeftBracket === -1 && indexOfRightBracket !== -1) {
         console.log(range);
+        // Before making decision, check if the previous sibling node is SPAN so that we can merge nodes.
+        // If we delete a range containing the right half of the previous timestamp and the left half of the next timestamp,
+        // they should remain as one.
+        // `currentNode` remains intact if no merge occurs
+        const mergeResult = this.mergeWithNextSpan(currentNode, startOffset);
+
+        if (mergeResult.isMergePerformed) {
+          currentNode = mergeResult.updatedCurrentNode;
+        }
         // TODO: Before making decisions, try to find a "[" in the previous text node
         isCase2 = true;
         // Record the length of the previous text node since they'll be merged and we need the length to restore the caret position
@@ -438,11 +498,14 @@ export class EditorComponent implements OnInit, OnDestroy {
         }
       }
       // We are in a SPAN node where a "[]" pair is found or it starts with "`".
-      // See if case 5 is applicable.
+      // See if case 5 or 6 is applicable.
       else {
+        const firstChar = textContent[0];
         const lastChar = textContent[textContent.length - 1];
-        if (startOffset === textContent.length && lastChar !== ']' && lastChar !== '`') {
+        if (lastChar !== ']' && lastChar !== '`') {
           isCase5 = true;
+        } else if (firstChar !== '[' && firstChar !== '`') {
+          isCase6 = true;
         }
       }
     }
@@ -455,7 +518,34 @@ export class EditorComponent implements OnInit, OnDestroy {
         const textContent = currentNode.previousSibling.textContent;
         if (!textContent.startsWith('`')) {
           if (textContent[textContent.length - 1] !== ']') {
-            isCase1 = true;
+            // Before making the decision, see if there is a "]" in the text node to pair with
+            // (Stop immediately if a "[" is seen)
+            const textContentTextNode = currentNode.textContent;
+            let indexOfRightBracketTextNode = -1;
+            for (let i = 0; i < textContentTextNode.length; i++) {
+              const ch = textContentTextNode[i];
+              if (ch === '[') {
+                break;
+              } else if (ch === ']') {
+                indexOfRightBracketTextNode = i;
+                break;
+              }
+            }
+            if (indexOfRightBracketTextNode !== -1) {
+              console.log('Input detection: A case 1 decision is avoided by reusing "]" in the next node.');
+              // Move the characters til the "]" in the text node to the previous node
+              currentNode.previousSibling.textContent += textContentTextNode.substring(0, indexOfRightBracketTextNode + 1);
+              range.setStart(currentNode, 0);
+              range.setEnd(currentNode, indexOfRightBracketTextNode + 1);
+              const previousNode = currentNode.previousSibling; // Back up in case the current node is entirely removed
+              document.execCommand('delete');
+              // Reposition the caret
+              range = sel.getRangeAt(0);
+              range.setStart(previousNode.firstChild, textContent.length);
+              range.collapse(true);
+            } else {
+              isCase1 = true;
+            }
           }
         }
         startOffset = textContent.length;
@@ -500,7 +590,7 @@ export class EditorComponent implements OnInit, OnDestroy {
       }
     }
 
-    isCaseFound = isCase1 || isCase2 || isCase3 || isCase4 || isCase5;
+    isCaseFound = isCase1 || isCase2 || isCase3 || isCase4 || isCase5 || isCase6;
 
     if (isCaseFound) {
       if (isCase1) {
@@ -565,9 +655,9 @@ export class EditorComponent implements OnInit, OnDestroy {
         range.collapse(true);
       } else if (isCase5) {
         console.log('Input detection: Case 5 applied.');
-        // Move the last character outside by
-        // Selecting the inserted char
-        range.setStart(range.startContainer, startOffset - 1);
+        // Move the characters after "]" outside by
+        // Selecting the inserted chars
+        range.setStart(range.startContainer, indexOfRightBracket + 1);
         range.setEnd(range.startContainer, startOffset);
         // Remove style
         document.execCommand('removeFormat');
@@ -576,7 +666,19 @@ export class EditorComponent implements OnInit, OnDestroy {
         // Restore caret position
         range = sel.getRangeAt(0);
         currentNode = range.endContainer;
-        range.setStart(currentNode, 1);
+        range.setStart(currentNode, startOffset - indexOfRightBracket - 1);
+        range.collapse(true);
+      } else if (isCase6) {
+        console.log('Input detection: Case 6 applied.');
+        // Remove the format of the first character and perform a normalization
+        range.setStart(range.startContainer, 0);
+        range.setEnd(range.startContainer, indexOfLeftBracket);
+        document.execCommand('removeFormat');
+        this.textEditor.nativeElement.normalize();
+        // Restore caret position
+        range = sel.getRangeAt(0);
+        currentNode = range.startContainer;
+        range.setStartAfter(currentNode);
         range.collapse(true);
       }
     }
@@ -647,6 +749,103 @@ export class EditorComponent implements OnInit, OnDestroy {
     }
 
     return timestampNode;
+  }
+
+  private insertLineBreak() {
+    // Clear selected text and manually insert the BR node in a correct manner
+    document.execCommand('remove');
+    const sel = window.getSelection();
+    let range = sel.getRangeAt(0);
+    const startOffset = range.startOffset;
+    let currentNode = range.startContainer;
+    if (currentNode.parentNode.nodeName === 'SPAN') {
+      currentNode = currentNode.parentNode;
+    }
+    let newBrNode: Node = null;
+    const textContent = currentNode.textContent;
+    // If we are at the beginning or the end, insert a <br> before or after the node
+    if (startOffset === 0) {
+      newBrNode = currentNode.parentNode.insertBefore(document.createElement('br'), currentNode);
+    } else if (startOffset === textContent.length) {
+      newBrNode = currentNode.parentNode.insertBefore(document.createElement('br'), currentNode.nextSibling);
+    }
+    // In the middle
+    else {
+      // If we are in a text node, split the text node and insert a <br> in between
+      if (currentNode.nodeName === '#text') {
+        const siblingNode = (currentNode as Text).splitText(startOffset);
+        newBrNode = currentNode.parentNode.insertBefore(document.createElement('br'), siblingNode);
+
+      }
+      // If we are in a SPAN node, split the SPAN node and insert a <br> in between
+      else {
+        const textBackup = textContent.substring(startOffset);
+        newBrNode = currentNode.parentNode.insertBefore(document.createElement('br'), currentNode.nextSibling);
+        range.setEnd(currentNode.firstChild, textContent.length);
+        this.preventNextInputDetection = true;
+        document.execCommand('delete');
+        this.onInput();
+        range = sel.getRangeAt(0);
+        range.setStartAfter(newBrNode);
+        range.collapse(true);
+        this.preventNextInputDetection = true;
+        document.execCommand('insertHTML', null, textBackup);
+      }
+    }
+
+    range = sel.getRangeAt(0);
+    range.setStartAfter(newBrNode);
+    range.collapse(true);
+  }
+
+  private mergeWithNextSpan(currentNode: Node, startOffset: number): SpanMergeResult {
+    const result = new SpanMergeResult();
+    // Don't merge if the two SPANs don't have the same purpose or if the next is a functionally complete one
+    if (currentNode.nextSibling &&
+      currentNode.nextSibling.nodeName === 'SPAN' &&
+      !this.isTimestampNode(currentNode.nextSibling) &&
+      !this.isWordBreakerNode(currentNode.nextSibling) &&
+      this.haveSamePurpose(currentNode.firstChild.parentElement, currentNode.nextSibling.firstChild.parentElement)) {
+      console.log('Input detection: Node merged with the next one.');
+      // Merge the nodes
+      result.isMergePerformed = true;
+      const nextNode = currentNode.nextSibling;
+      const textInNextNode = nextNode.textContent;
+      currentNode.textContent += textInNextNode;
+      nextNode.parentNode.removeChild(nextNode);
+      // Restore caret position
+      const range = window.getSelection().getRangeAt(0); // Range's start container is the SPAN
+      result.updatedCurrentNode = range.startContainer;
+      range.setStart(range.startContainer.firstChild, startOffset);
+      range.collapse(true);
+      // It's strange that the removed child remains an empty text node in Chrome and it's not even fixed by using normalize()...
+      // It seems to be a display bug in the Elements window since the empty node cannot be deleted. Assume it doesn't exist actually.
+    }
+    return result;
+  }
+
+  private mergeWithPreviousSpan(currentNode: Node): SpanMergeResult {
+    const result = new SpanMergeResult();
+    // Don't merge if the two SPANs don't have the same purpose or if the previous is a functionally complete one
+    if (currentNode.previousSibling &&
+      currentNode.previousSibling.nodeName === 'SPAN' &&
+      !this.isTimestampNode(currentNode.previousSibling) &&
+      !this.isWordBreakerNode(currentNode.previousSibling) &&
+      this.haveSamePurpose(currentNode.firstChild.parentElement, currentNode.previousSibling.firstChild.parentElement)) {
+      console.log('Input detection: Node merged with the previous one.');
+      // Merge the nodes
+      result.isMergePerformed = true;
+      const previousNode = currentNode.previousSibling;
+      const textInPreviousNode = previousNode.textContent;
+      currentNode.textContent = textInPreviousNode + currentNode.textContent;
+      previousNode.parentNode.removeChild(previousNode);
+      // Restore caret position
+      const range = window.getSelection().getRangeAt(0); // Range's start container is the SPAN
+      result.updatedCurrentNode = range.startContainer;
+      range.setStart(range.startContainer.firstChild, textInPreviousNode.length);
+      range.collapse(true);
+    }
+    return result;
   }
 
 }
